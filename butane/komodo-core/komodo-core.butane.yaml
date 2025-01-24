@@ -100,7 +100,7 @@ storage:
           ## Enable login with username + password.
           KOMODO_LOCAL_AUTH=true
           ## Disable new user signups.
-          KOMODO_DISABLE_USER_REGISTRATION=false
+          KOMODO_DISABLE_USER_REGISTRATION=true
           ## All new logins are auto enabled
           KOMODO_ENABLE_NEW_USERS=false
           ## Disable non-admins from creating new resources.
