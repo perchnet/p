@@ -1,0 +1,12 @@
+{
+    "ansible.python.interpreterPath": "/home/bri/dev/p/venv/bin/python",
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/Relativ-IT/Butane-Schemas/Release/Butane-Schema.json": [
+            "*.butane.yaml",
+            "*.butane.j2.yaml",
+            "file:///home/bri/dev/p/ansible/templates/butane/base.butane.j2.yaml",
+            "file:///home/bri/dev/p/ansible/templates/butane/ucore-autorebase.bu.yaml",
+            "file:///home/bri/dev/p/ansible/templates/butane/base.bu"
+        ]
+    }
+}

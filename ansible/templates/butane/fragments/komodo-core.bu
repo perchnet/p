@@ -1,0 +1,269 @@
+variant: fcos
+version: 1.4.0
+storage:
+  directories:
+    - path: /etc/komodo
+      mode: 0754
+    - path: /etc/komodo/data
+      mode: 0700
+    - path: /etc/komodo/core
+      mode: 0700
+  files:
+    - path: /etc/komodo/core/compose.yaml
+      overwrite: true
+      contents:
+        # source: https://raw.githubusercontent.com/mbecker20/komodo/main/compose/sqlite.compose.yaml
+        source: https://raw.githubusercontent.com/mbecker20/komodo/main/compose/mongo.compose.yaml
+    - path: /etc/komodo/core/override.yaml
+      overwrite: true
+      contents:
+        inline: |
+          services:
+            core:
+              extra_hosts:
+                - host.docker.internal:host-gateway
+    - path: /etc/komodo/core/compose.env
+      overwrite: true
+      mode: 0600
+      contents:
+        inline: |
+          ####################################
+          # 🦎 KOMODO COMPOSE - VARIABLES 🦎 #
+          ####################################
+
+          ## These compose variables can be used with all Komodo deployment options.
+          ## Pass these variables to the compose up command using `--env-file komodo/compose.env`.
+          ## Additionally, they are passed to both Komodo Core and Komodo Periphery with `env_file: ./compose.env`,
+          ## so you can pass any additional environment variables to Core / Periphery directly in this file as well.
+
+          ## Stick to a specific version, or use `latest`
+          COMPOSE_KOMODO_IMAGE_TAG=latest
+
+          ## Note: 🚨 Podman does NOT support local logging driver 🚨. See Podman options here:
+          ## `https://docs.podman.io/en/v4.6.1/markdown/podman-run.1.html#log-driver-driver`
+          COMPOSE_LOGGING_DRIVER=local # Enable log rotation with the local driver.
+
+          ## DB credentials - Ignored for Sqlite
+          DB_USERNAME=qaq8Qox67CA7kpvZVDTVBsNWHLnfceX7sAjh
+          DB_PASSWORD=jGXErZ37izpfhmxpGxNHLQecQZ4pbmeLqyB7
+
+          ## Configure a secure passkey to authenticate between Core / Periphery.
+          PASSKEY=MNbr2uaNqMzsemuUdAuNWM9yKzVybgYoDZaC
+
+          #=-------------------------=#
+          #= Komodo Core Environment =#
+          #=-------------------------=#
+
+          ## Full variable list + descriptions are available here:
+          ## 🦎 https://github.com/mbecker20/komodo/blob/main/config/core.config.toml 🦎
+
+          ## Note. Secret variables also support `${VARIABLE}_FILE` syntax to pass docker compose secrets.
+          ## Docs: https://docs.docker.com/compose/how-tos/use-secrets/#examples
+
+          ## Used for Oauth / Webhook url suggestion / Caddy reverse proxy.
+          KOMODO_HOST=https://demo.komo.do
+          ## Displayed in the browser tab.
+          KOMODO_TITLE=Komodo
+          ## Create a server matching this address as the "first server".
+          ## Use `https://host.docker.internal:8120` when using systemd-managed Periphery.
+          KOMODO_FIRST_SERVER=https://host.docker.internal:8120
+          ## Make all buttons just double-click, rather than the full confirmation dialog.
+          KOMODO_DISABLE_CONFIRM_DIALOG=false
+
+          ## Rate Komodo polls your servers for
+          ## status / container status / system stats / alerting.
+          ## Options: 1-sec, 5-sec, 15-sec, 1-min, 5-min.
+          ## Default: 15-sec
+          KOMODO_MONITORING_INTERVAL="15-sec"
+          ## Rate Komodo polls Resources for updates,
+          ## like outdated commit hash.
+          ## Options: 1-min, 5-min, 15-min, 30-min, 1-hr.
+          ## Default: 5-min
+          KOMODO_RESOURCE_POLL_INTERVAL="5-min"
+
+          ## Used to auth against periphery. Alt: KOMODO_PASSKEY_FILE
+          KOMODO_PASSKEY=${PASSKEY}
+          ## Used to auth incoming webhooks. Alt: KOMODO_WEBHOOK_SECRET_FILE
+          KOMODO_WEBHOOK_SECRET=a_random_secret
+          ## Used to generate jwt. Alt: KOMODO_JWT_SECRET_FILE
+          KOMODO_JWT_SECRET=a_random_jwt_secret
+
+          ## Enable login with username + password.
+          KOMODO_LOCAL_AUTH=true
+          ## Disable new user signups.
+          KOMODO_DISABLE_USER_REGISTRATION=true
+          ## All new logins are auto enabled
+          KOMODO_ENABLE_NEW_USERS=false
+          ## Disable non-admins from creating new resources.
+          KOMODO_DISABLE_NON_ADMIN_CREATE=false
+          ## Allows all users to have Read level access to all resources.
+          KOMODO_TRANSPARENT_MODE=false
+
+          ## Time to live for jwt tokens.
+          ## Options: 1-hr, 12-hr, 1-day, 3-day, 1-wk, 2-wk
+          KOMODO_JWT_TTL="1-day"
+
+          ## OIDC Login
+          KOMODO_OIDC_ENABLED=false
+          ## Must reachable from Komodo Core container
+          # KOMODO_OIDC_PROVIDER=https://oidc.provider.internal/application/o/komodo
+          ## Change the host to one reachable be reachable by users (optional if it is the same as above).
+          ## DO NOT include the `path` part of the URL.
+          # KOMODO_OIDC_REDIRECT_HOST=https://oidc.provider.external
+          ## Your client credentials
+          # KOMODO_OIDC_CLIENT_ID= # Alt: KOMODO_OIDC_CLIENT_ID_FILE
+          # KOMODO_OIDC_CLIENT_SECRET= # Alt: KOMODO_OIDC_CLIENT_SECRET_FILE
+          ## Make usernames the full email.
+          # KOMODO_OIDC_USE_FULL_EMAIL=true
+          ## Add additional trusted audiences for token claims verification.
+          ## Supports comma separated list, and passing with _FILE (for compose secrets).
+          # KOMODO_OIDC_ADDITIONAL_AUDIENCES=abc,123 # Alt: KOMODO_OIDC_ADDITIONAL_AUDIENCES_FILE
+
+          ## Github Oauth
+          KOMODO_GITHUB_OAUTH_ENABLED=false
+          # KOMODO_GITHUB_OAUTH_ID= # Alt: KOMODO_GITHUB_OAUTH_ID_FILE
+          # KOMODO_GITHUB_OAUTH_SECRET= # Alt: KOMODO_GITHUB_OAUTH_SECRET_FILE
+
+          ## Google Oauth
+          KOMODO_GOOGLE_OAUTH_ENABLED=false
+          # KOMODO_GOOGLE_OAUTH_ID= # Alt: KOMODO_GOOGLE_OAUTH_ID_FILE
+          # KOMODO_GOOGLE_OAUTH_SECRET= # Alt: KOMODO_GOOGLE_OAUTH_SECRET_FILE
+
+          ## Aws - Used to launch Builder instances and ServerTemplate instances.
+          KOMODO_AWS_ACCESS_KEY_ID= # Alt: KOMODO_AWS_ACCESS_KEY_ID_FILE
+          KOMODO_AWS_SECRET_ACCESS_KEY= # Alt: KOMODO_AWS_SECRET_ACCESS_KEY_FILE
+
+          ## Hetzner - Used to launch ServerTemplate instances
+          ## Hetzner Builder not supported due to Hetzner pay-by-the-hour pricing model
+          KOMODO_HETZNER_TOKEN= # Alt: KOMODO_HETZNER_TOKEN_FILE
+
+          #=------------------------------=#
+          #= Komodo Periphery Environment =#
+          #=------------------------------=#
+
+          ## Full variable list + descriptions are available here:
+          ## 🦎 https://github.com/mbecker20/komodo/blob/main/config/periphery.config.toml 🦎
+
+          ## Periphery passkeys must include KOMODO_PASSKEY to authenticate
+          PERIPHERY_PASSKEYS=${PASSKEY}
+
+          ## Enable SSL using self signed certificates.
+          ## Connect to Periphery at https://address:8120.
+          PERIPHERY_SSL_ENABLED=true
+
+          ## If the disk size is overreporting, can use one of these to 
+          ## whitelist / blacklist the disks to filter them, whichever is easier.
+          ## Accepts comma separated list of paths.
+          ## Usually whitelisting just /etc/hostname gives correct size.
+          PERIPHERY_INCLUDE_DISK_MOUNTS=/etc/hostname
+          # PERIPHERY_EXCLUDE_DISK_MOUNTS=/snap,/etc/repos
+    - path: /usr/local/bin/periphery
+      overwrite: true
+      contents:
+        source: https://github.com/mbecker20/komodo/releases/latest/download/periphery-x86_64
+      mode: 0555
+    - path: /etc/komodo/periphery.config.toml
+      overwrite: true
+      contents:
+        source: https://raw.githubusercontent.com/mbecker20/komodo/main/config/periphery.config.toml
+      mode: 0555
+      user:
+        name: root
+      group:
+        name: wheel
+    - path: /etc/hostname
+      overwrite: true
+      contents:
+        inline: komodo-core
+      mode: 0555
+      user:
+        name: root
+      group:
+        name: wheel
+
+systemd:
+  units:
+    - name: ucore-unsigned-autorebase.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=uCore autorebase to unsigned OCI and reboot
+        ConditionPathExists=!/etc/ucore-autorebase/unverified
+        ConditionPathExists=!/etc/ucore-autorebase/signed
+        After=network-online.target
+        Wants=network-online.target
+        [Service]
+        Type=oneshot
+        StandardOutput=journal+console
+        ExecStart=/usr/bin/rpm-ostree rebase --bypass-driver ostree-unverified-registry:ghcr.io/ublue-os/ucore:stable
+        ExecStart=/usr/bin/touch /etc/ucore-autorebase/unverified
+        ExecStart=/usr/bin/systemctl disable ucore-unsigned-autorebase.service
+        ExecStart=/usr/bin/systemctl reboot
+        [Install]
+        WantedBy=multi-user.target
+    - name: ucore-signed-autorebase.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=uCore autorebase to signed OCI and reboot
+        ConditionPathExists=/etc/ucore-autorebase/unverified
+        ConditionPathExists=!/etc/ucore-autorebase/signed
+        After=network-online.target
+        Wants=network-online.target
+        [Service]
+        Type=oneshot
+        StandardOutput=journal+console
+        ExecStart=/usr/bin/rpm-ostree rebase --bypass-driver ostree-image-signed:docker://ghcr.io/ublue-os/ucore:stable
+        ExecStart=/usr/bin/touch /etc/ucore-autorebase/signed
+        ExecStart=/usr/bin/systemctl disable ucore-signed-autorebase.service
+        ExecStart=/usr/bin/systemctl reboot
+        [Install]
+        WantedBy=multi-user.target
+    - name: komodo-up.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Enable komodo core
+        ConditionPathExists=/etc/ucore-autorebase/signed
+        ConditionPathExists=!/etc/komodo/core/started
+        After=docker.service
+        Wants=docker.service
+        [Service]
+        Type=oneshot
+        Restart=on-failure
+        StandardOutput=journal
+        WorkingDirectory=/etc/komodo/core
+        ExecStart=/usr/bin/touch /etc/komodo/core/started
+        ExecStart=/usr/bin/docker compose -p komodo -f /etc/komodo/core/compose.yaml -f /etc/komodo/core/override.yaml --env-file /etc/komodo/core/compose.env up -d
+        [Install]
+        WantedBy=multi-user.target
+    - name: komodo-logs.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Follow komodo logs
+        After=komodo-up.service
+        Wants=komodo-up.service
+        [Service]
+        Type=exec
+        StandardOutput=console
+        WorkingDirectory=/etc/komodo/core
+        ExecStart=/usr/bin/docker compose -p komodo logs -f
+        [Install]
+        WantedBy=multi-user.target
+    - name: docker.socket
+      enabled: true
+    - name: docker.service
+      enabled: true
+    - name: periphery.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Agent to connect with Komodo Core
+        [Service]
+        Environment=HOME=/etc/komodo/data
+        ExecStart=/bin/sh -lc /usr/local/bin/periphery --config-path /etc/komodo/periphery.config.toml
+        Restart=on-failure
+        TimeoutStartSec=0
+        [Install]
+        WantedBy=default.target

@@ -1,0 +1,7 @@
+# Template for inventory file
+[target_vms]
+vm1
+vm2
+vm3
+vm4
+vm5

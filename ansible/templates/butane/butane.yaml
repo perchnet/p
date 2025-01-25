@@ -1,0 +1,42 @@
+---
+- name: turn butane into json
+  gather_facts: false
+  hosts: localhost
+  vars:
+    butane_output: "{{ ignition_file | default('output/ign.json') }}"
+    butane_files_dir: "{{ ignition_files_dir | default('files') }}"
+    butane_fragments: "{{ butane_fragments_dir | default([
+      './fragments/fcos-1.4.0.bu',
+      './fragments/passwd.bu'
+      ])}}"
+
+  tasks:
+    - name: Check if yq is installed
+      ansible.builtin.command: which yq
+      delegate_to: localhost
+      register: yq_check
+      ignore_errors: true
+
+    - name: Install yq if not present
+      delegate_to: localhost
+      ansible.builtin.package:
+        name: yq
+        state: present
+      when: yq_check.rc != 0
+
+    - name: Download the latest Butane x86-64 binary release
+      delegate_to: localhost
+      ansible.builtin.get_url:
+        url: "https://github.com/coreos/butane/releases/latest/download/butane-x86_64-unknown-linux-gnu"
+        dest: "../../tools/butane"
+        mode: '0755'
+    - name: combine supplied butane yaml files and ignite
+      delegate_to: localhost
+      ansible.builtin.shell:
+        cmd: >
+          yq eval-all '. as $item ireduce ({}; . *+ $item)'
+          {{ butane_fragments | join(" ")}}
+          |
+          ../../tools/butane --pretty --strict 
+          -o {{ butane_output  }}
+          --files-dir {{ butane_files_dir }}
