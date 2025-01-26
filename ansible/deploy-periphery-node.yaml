@@ -10,18 +10,17 @@
       community.general.proxmox_kvm:
         # api_user: "{{ proxmox_user }}"
         # api_password: "{{ proxmox_password }}"
-        api_token_id: "{{ proxmox_token_id }}"
-        api_token: "{{ proxmox_token }}"
-        api_host: "{{ proxmox_host }}"
-        api_port: "{{ proxmox_port }}"
-        node: "{{ proxmox_node }}"
+        api_token_id: "{{ proxmox_token_id | default(omit) }}"
+        api_user: "{{ proxmox_user | default(omit) }}"
+        api_token: "{{ proxmox_token | default(omit)}}"
+        api_host: "{{ proxmox_host | default('localhost') }}"
+        api_port: "{{ proxmox_port | default(8006)  }}"
+        node: "{{ proxmox_node | default(omit) }}"
         clone: "{{ template_vm }}"
         cicustom: "user=pmxcfs:snippets/komodo-core.json"
-        name: "{{ item }}"
-        vmid: "{{ 100 + ansible_index }}"
+        name: "{{ item | default(omit) }}"
+        # vmid_base: "{{ proxmox_vmid_base | default(9000) }}"
+        # vmid: "{{ (vmid_base != null) | ternary(omit,proxmox_vmid_base + ansible_index ) }}"
         pool: "{{ proxmox_pool }}"
         full: true
         state: present
-      loop: "{{ groups['target_vms'] }}"
-      loop_control:
-        index_var: ansible_index

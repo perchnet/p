@@ -1,0 +1,51 @@
+variant: fcos
+version: 1.4.0
+storage:
+  directories:
+    - path: /etc/komodo
+      mode: 0754
+    - path: /etc/komodo/data
+      mode: 0700
+  files:
+    - path: /usr/local/bin/periphery
+      overwrite: true
+      contents:
+        source: https://github.com/mbecker20/komodo/releases/latest/download/periphery-x86_64
+      mode: 0555
+    - path: /etc/komodo/periphery.config.toml
+      overwrite: true
+      contents:
+        source: https://raw.githubusercontent.com/mbecker20/komodo/main/config/periphery.config.toml
+      mode: 0555
+      user:
+        name: root
+      group:
+        name: wheel
+    - path: /etc/hostname
+      overwrite: true
+      contents:
+        inline: komodo-core
+      mode: 0555
+      user:
+        name: root
+      group:
+        name: wheel
+
+systemd:
+  units:
+    - name: docker.socket
+      enabled: true
+    - name: docker.service
+      enabled: true
+    - name: periphery.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Agent to connect with Komodo Core
+        [Service]
+        Environment=HOME=/etc/komodo/data
+        ExecStart=/bin/sh -lc /usr/local/bin/periphery --config-path /etc/komodo/periphery.config.toml
+        Restart=on-failure
+        TimeoutStartSec=0
+        [Install]
+        WantedBy=default.target

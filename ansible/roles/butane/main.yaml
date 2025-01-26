@@ -1,0 +1,5 @@
+---
+- name: Ensure prerequisites (butane)
+  ansible.builtin.import_tasks: tasks/ensure-prerequisites.yaml
+- name: Combine supplied butane yaml files and ignite
+  ansible.builtin.import_tasks: tasks/ignite-butane.yaml

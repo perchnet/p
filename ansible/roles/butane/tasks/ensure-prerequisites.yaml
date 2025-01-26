@@ -1,0 +1,36 @@
+---
+- name: Ensure prerequisites (butane)
+  vars:
+    my_butane_binary: "{{ butane_binary | default('tools/butane') }}"
+    butane_minimum_version: 0.18.0
+
+  block:
+    - block: # version check
+      - name: Check if Butane is installed
+        ansible.builtin.command: "{{ my_butane_binary }} --version"
+        delegate_to: localhost
+        register: butane_check
+        ignore_errors: true
+        changed_when: false
+      - name: Register fact for Butane version
+        ansible.builtin.set_fact:
+          butane_version: "{{ butane_check.stdout | regex_replace('^.*?([0-9.]+).*$', '\\1') }}"
+        when: butane_check.rc == 0
+      - name: Show butane version
+        ansible.builtin.debug:
+          msg: |
+            Butane version: {{ butane_version }}
+            Minimum version: {{ butane_minimum_version }}
+            Update required: {{ butane_version is version(butane_minimum_version, 'lt', version_type='semver') }}
+    - block: # update butane
+      - name: Delete old Butane binary if it exists
+        ansible.builtin.file:
+          path: "{{ my_butane_binary }}"
+          state: absent
+      - name: Download the latest Butane binary release
+        delegate_to: localhost
+        ansible.builtin.get_url:
+          url: "https://github.com/coreos/butane/releases/latest/download/butane-{{ ansible_architecture }}-unknown-linux-gnu"
+          dest: "{{ my_butane_binary }}"
+          mode: '0755'
+      when: butane_version is version(butane_minimum_version, 'lt', version_type='semver')

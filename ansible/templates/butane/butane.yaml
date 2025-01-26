@@ -1,11 +1,11 @@
 ---
 - name: turn butane into json
-  gather_facts: false
+  #gather_facts: false
   hosts: localhost
   vars:
-    butane_output: "{{ ignition_file | default('output/ign.json') }}"
-    butane_files_dir: "{{ ignition_files_dir | default('files') }}"
-    butane_fragments: "{{ butane_fragments_dir | default([
+    my_butane_output: "{{ ignition_output_file | default('output/ign.json') }}"
+    my_butane_files_dir: "{{ butane_files_dir | default('files') }}"
+    my_butane_fragments: "{{ butane_fragments | default([
       './fragments/fcos-1.4.0.bu',
       './fragments/passwd.bu'
       ])}}"
@@ -24,10 +24,11 @@
         state: present
       when: yq_check.rc != 0
 
-    - name: Download the latest Butane x86-64 binary release
+
+    - name: Download the latest Butane binary release
       delegate_to: localhost
       ansible.builtin.get_url:
-        url: "https://github.com/coreos/butane/releases/latest/download/butane-x86_64-unknown-linux-gnu"
+        url: "https://github.com/coreos/butane/releases/latest/download/butane-{{ ansible_architecture }}-unknown-linux-gnu"
         dest: "../../tools/butane"
         mode: '0755'
     - name: combine supplied butane yaml files and ignite
@@ -35,8 +36,7 @@
       ansible.builtin.shell:
         cmd: >
           yq eval-all '. as $item ireduce ({}; . *+ $item)'
-          {{ butane_fragments | join(" ")}}
+          {{ my_butane_fragments | join(" ")}}
           |
           ../../tools/butane --pretty --strict 
-          -o {{ butane_output  }}
-          --files-dir {{ butane_files_dir }}
+          -o {{ my_butane_output  }} --files-dir {{ my_butane_files_dir }}

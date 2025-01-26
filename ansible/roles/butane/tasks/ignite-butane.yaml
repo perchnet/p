@@ -1,0 +1,22 @@
+---
+- name: Combine supplied butane yaml files and ignite
+  vars:
+    my_butane_binary: "{{ butane_binary | default('tools/butane') }}"
+    my_butane_files_dir: "{{ butane_files_dir | default('files') }}"
+    default_butane:
+      variant: fcos
+      version: 1.4.0
+    my_butane: "{{ butane | default(default_butane) }}"
+
+  block:
+    - name: Ignite butane
+      ansible.builtin.command: >
+        {{ my_butane_binary }} --strict --files-dir {{ my_butane_files_dir }}
+      args:
+        stdin: "{{ my_butane | to_nice_yaml }}"
+      register: ignition_output
+      changed_when: true # TODO: check if ignition_output is different from the current ignition file
+
+    - name: Print ignition output
+      ansible.builtin.debug:
+        msg: "{{ ignition_output.stdout }}"
