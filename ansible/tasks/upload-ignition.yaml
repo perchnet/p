@@ -1,0 +1,14 @@
+- name: Upload ignition_output to sftp server
+  ansible.builtin.command:
+    cmd: >
+      scp
+        -B
+        -F /dev/null
+        -oStrictHostKeyChecking=no
+        -oUserKnownHostsFile=/dev/null
+        -P {{ sftp_port | default(22) }}
+        -oIdentitiesOnly=true
+        -i {{ sftp_key }}
+        {{ ignition_output_file }}
+        {{ sftp_user }}@{{ sftp_host }}:snippets/{{ vm.vmid }}.ign
+  changed_when: true

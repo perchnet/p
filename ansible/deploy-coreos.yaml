@@ -15,7 +15,7 @@
   tasks:
     - name: Load and combine butane fragments
       with_items: "{{ butane_fragments }}"
-      ansible.builtin.include_tasks:
+      ansible.builtin.include_tasks: # cannot be import_tasks
         file: "roles/butane/tasks/combine-butane.yaml"
 
     - name: Generate hostname
@@ -35,27 +35,16 @@
         hostname: "{{ hostname_words }}"
         hostname_append: "{{ vm.vmid | default(1234) }}"
 
-#    - name: Add hostname to butane
-#      ansible.builtin.set_fact:
-
-    - name: Combine Butane fragments
+    - name: Add hostname to Butane configuration
       ansible.builtin.import_tasks:
-        file: tasks/combine-butane.yaml
-      vars:
-        butane_add:
-          storage:
-            files:
-              - path: /etc/hostname
-                mode: 420 # 0644
-                contents:
-                  inline: "{{ hostname }}"
+        file: tasks/add-hostname-to-butane.yaml
 
     - name: Print Butane configuration
       ansible.builtin.debug:
         var: butane
 
     - name: Build ignition files
-      ansible.builtin.include_tasks:
+      ansible.builtin.import_tasks:
         file: roles/butane/main.yaml
 
     - name: Save ignition_output to file
@@ -63,32 +52,11 @@
         mode: 420 # 0644
         content: "{{ ignition_output.stdout }}"
         dest: "{{ ignition_output_file }}"
+
     - name: Upload ignition_output to sftp server
-      ansible.builtin.command:
-        cmd: >
-          scp
-            -B
-            -P {{ sftp_port | default(22) }}
-            -oIdentitiesOnly=true
-            -i {{ sftp_key }}
-            {{ ignition_output_file }}
-            {{ sftp_user }}@{{ sftp_host }}:snippets/{{ vm.vmid }}.ign
-      changed_when: true
+      ansible.builtin.import_tasks:
+        file: tasks/upload-ignition.yaml
 
     - name: Set VM cicustom to Ignition file
-      community.general.proxmox_kvm:
-        api_user: "{{ proxmox_user | default(null) }}"
-        api_token_id: "{{ proxmox_token_id | default(omit) }}"
-        api_token_secret: "{{ proxmox_token | default(omit)}}"
-        api_password: "{{ proxmox_password | default(omit) }}"
-        api_host: "{{ proxmox_host | default('localhost') }}"
-        api_port: "{{ proxmox_port | default(8006)  }}"
-        node: "{{ proxmox_node | default(omit) }}"
-        cicustom: "user={{ proxmox_snippet_storage }}:snippets/{{ vm.vmid }}.ign"
-        name: "{{ hostname }}"
-        update: true
-        vmid: "{{ vm.vmid }}"
-        pool: "{{ proxmox_pool | default(omit) }}"
-        # full: true
-        state: present
-      register: vmupdate
+      ansible.builtin.import_tasks:
+        file: tasks/set-cicustom.yaml

@@ -1,0 +1,9 @@
+- name: Set VM cicustom to Ignition file
+  ansible.builtin.import_tasks:
+    file: update-vm.yaml
+  vars:
+    cicustom: "user={{ proxmox_snippet_storage }}:snippets/{{ vm.vmid }}.ign"
+    vm_name: "{{ hostname }}"
+    update: true
+    vmid: "{{ vm.vmid }}"
+  register: vmupdate

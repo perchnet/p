@@ -1,0 +1,15 @@
+- name: Set VM cicustom to Ignition file
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox_user | default(null) }}"
+    api_token_id: "{{ proxmox_token_id | default(omit) }}"
+    api_token_secret: "{{ proxmox_token | default(omit)}}"
+    api_password: "{{ proxmox_password | default(omit) }}"
+    api_host: "{{ proxmox_host | default('localhost') }}"
+    api_port: "{{ proxmox_port | default(8006)  }}"
+    name: "{{ vm_name | default(omit) }}"
+    node: "{{ proxmox_node | default(omit) }}"
+    cicustom: "{{ cicustom }}"
+    update: true
+    vmid: "{{ vm.vmid }}"
+    # state: present
+  register: vmupdate

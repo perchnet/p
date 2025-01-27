@@ -1,0 +1,11 @@
+- name: Add hostname to Butane configuration
+  ansible.builtin.import_tasks:
+    file: combine-butane.yaml
+  vars:
+    butane_add:
+      storage:
+        files:
+          - path: /etc/hostname
+            mode: 420 # 0644
+            contents:
+              inline: "{{ hostname }}"
