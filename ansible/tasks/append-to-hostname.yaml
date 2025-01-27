@@ -1,0 +1,8 @@
+- block:
+  - name: Append to hostname
+    ansible.builtin.set_fact:
+      hostname: "{{ hostname }}-{{ hostname_append }}"
+      cacheable: yes
+  - name: Print hostname
+    ansible.builtin.debug:
+      var: hostname

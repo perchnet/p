@@ -1,0 +1,21 @@
+    - name: Clone VM from template
+      community.general.proxmox_kvm:
+        # api_user: "{{ proxmox_user }}"
+        # api_password: "{{ proxmox_password }}"
+        api_user: "{{ proxmox_user | default(null) }}"
+        api_token_id: "{{ proxmox_token_id | default(omit) }}"
+        api_token_secret: "{{ proxmox_token | default(omit) }}"
+        api_password: "{{ proxmox_password | default(omit) }}"
+        api_host: "{{ proxmox_host | default('localhost') }}"
+        api_port: "{{ proxmox_port | default(8006) }}"
+        node: "{{ proxmox_node | default(omit) }}"
+        clone: "{{ template_vmid | default(0) }}"
+        name: "{{ hostname_words }}"
+        vmid: "{{ template_vmid | default(omit) }}"
+        pool: "{{ proxmox_pool | default(omit) }}"
+        # full: true
+        state: present
+      register: vm
+    - name: Print VM
+      ansible.builtin.debug:
+        var: vm

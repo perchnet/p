@@ -10,76 +10,69 @@
       - fragments/passwd-bri.bu
       #- fragments/ucore-autorebase.bu
     butane_fragments_dir: "roles/butane"
-    ignition_output_file: "ignition_output.ign"
+    ignition_output_file: "roles/butane/output/ign.json"
 
   tasks:
     - name: Load and combine butane fragments
       with_items: "{{ butane_fragments }}"
       ansible.builtin.include_tasks:
         file: "roles/butane/tasks/combine-butane.yaml"
-    - name: print combined butane
-      ansible.builtin.debug:
-        var: butane
-#    - name: fail now
-#      ansible.builtin.fail:
-#        msg: "This is a test"
 
     - name: Generate hostname
-      ansible.builtin.set_fact:
-        hostname_words: "{{ lookup('community.general.random_words', numwords=2, delimiter='-') }}"
+      ansible.builtin.import_tasks:
+        file: tasks/generate-hostname.yaml
+      vars:
+        hostname_var: "hostname_words"
+
     - name: Clone VM from template
-      community.general.proxmox_kvm:
-        # api_user: "{{ proxmox_user }}"
-        # api_password: "{{ proxmox_password }}"
-        api_user: "{{ proxmox_user | default(null) }}"
-        api_token_id: "{{ proxmox_token_id | default(omit) }}"
-        api_token_secret: "{{ proxmox_token | default(omit)}}"
-        api_password: "{{ proxmox_password | default(omit) }}"
-        api_host: "{{ proxmox_host | default('localhost') }}"
-        api_port: "{{ proxmox_port | default(8006)  }}"
-        node: "{{ proxmox_node | default(omit) }}"
-        clone: "{{ template_vmid | default(0) }}"
-        name: "{{ hostname_words }}"
-        vmid: "{{ template_vmid | default(omit) }}"
-        pool: "{{ proxmox_pool | default(omit) }}"
-        # full: true
-        state: present
-      register: vm
-    - name: Print VM
-      ansible.builtin.debug:
-        var: vm
-    - name: Add vmid to hostname
-      ansible.builtin.set_fact:
-        hostname: "{{ hostname_words }}-{{ vm.vmid }}"
-    - name: Add hostname to butane
-      ansible.builtin.set_fact:
-        butane2:
+      ansible.builtin.import_tasks:
+        file: tasks/clone-vm.yaml
+
+    - name: Append vmid to hostname
+      ansible.builtin.import_tasks:
+        file: tasks/append-to-hostname.yaml
+      vars:
+        hostname: "{{ hostname_words }}"
+        hostname_append: "{{ vm.vmid | default(1234) }}"
+
+#    - name: Add hostname to butane
+#      ansible.builtin.set_fact:
+
+    - name: Combine Butane fragments
+      ansible.builtin.import_tasks:
+        file: tasks/combine-butane.yaml
+      vars:
+        butane_add:
           storage:
             files:
               - path: /etc/hostname
                 mode: 420 # 0644
                 contents:
                   inline: "{{ hostname }}"
-    - name: Combine Butane fragments
-      ansible.builtin.set_fact:
-        butane: "{{ butane | combine(butane2) }}"
+
     - name: Print Butane configuration
       ansible.builtin.debug:
         var: butane
+
     - name: Build ignition files
       ansible.builtin.include_tasks:
         file: roles/butane/main.yaml
-    - name: Print ignition output
-      ansible.builtin.debug:
-        msg: "{{ ignition_output.stdout }}"
-    
+
     - name: Save ignition_output to file
       ansible.builtin.copy:
+        mode: 420 # 0644
         content: "{{ ignition_output.stdout }}"
         dest: "{{ ignition_output_file }}"
     - name: Upload ignition_output to sftp server
       ansible.builtin.command:
-        cmd: "scp -B -P {{ sftp_port | default(22) }} -oIdentitiesonly=true -i {{ sftp_key }} {{ ignition_output_file }} {{ sftp_user }}@{{ sftp_host }}:snippets/{{ vm.vmid }}.ign"
+        cmd: >
+          scp
+            -B
+            -P {{ sftp_port | default(22) }}
+            -oIdentitiesOnly=true
+            -i {{ sftp_key }}
+            {{ ignition_output_file }}
+            {{ sftp_user }}@{{ sftp_host }}:snippets/{{ vm.vmid }}.ign
       changed_when: true
 
     - name: Set VM cicustom to Ignition file
@@ -91,8 +84,6 @@
         api_host: "{{ proxmox_host | default('localhost') }}"
         api_port: "{{ proxmox_port | default(8006)  }}"
         node: "{{ proxmox_node | default(omit) }}"
-        # clone: "{{ template_vm | default(0) }}"
-       #cicustom: "user=snippets:snippets/{{ vm.vmid }}.ign"
         cicustom: "user={{ proxmox_snippet_storage }}:snippets/{{ vm.vmid }}.ign"
         name: "{{ hostname }}"
         update: true

@@ -1,9 +1,0 @@
-variant: fcos
-version: 1.4.0
-passwd:
-  users:
-    - name: core
-      ssh_authorized_keys:
-        - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPDx+KV/SW4RGIeKA2FHU9S7bZgnJMy77N6lBeo2n8sJ pve-macpro@1p"
-        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKvsoJVOLJ3FshnAF5sJTpCxjNu2MAcCsN/hq0/qIBAe
-      password_hash: $y$j9T$Pb/bPguKi8nTE.5JtrmET1$1Z6uqWQHdk4.xBdyLTeYhO0AGi58OF2nOFEmFjaYkGD

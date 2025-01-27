@@ -1,0 +1,8 @@
+- block:
+    - name: Generate hostname
+      ansible.builtin.set_fact:
+        "{{ hostname_var | default('hostname_words')}}": "{{ lookup('community.general.random_words', numwords=2, delimiter='-') }}"
+
+- name: Print hostname
+  ansible.builtin.debug:
+    var: "{{ hostname_var | default('hostname_words')}}"

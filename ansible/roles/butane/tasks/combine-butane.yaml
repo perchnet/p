@@ -1,8 +1,9 @@
-- block:
-    - name: read butane fragment
+- name: Read and combine Butane fragments
+  block:
+    - name: Read Butane fragment
       ansible.builtin.include_vars:
         file: "roles/butane/{{ item }}"
         name: butane_load
-    - name: combine butane fragments
+    - name: Combine Butane fragments
       ansible.builtin.set_fact:
         butane: "{{ butane | default([]) | combine(butane_load) }}"
