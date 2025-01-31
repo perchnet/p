@@ -1,6 +1,8 @@
 - name: Upload ignition_output to sftp server
   ansible.builtin.command:
     cmd: >
+      /usr/bin/env
+      SSH_AUTH_SOCK=/dev/null
       scp
         -B
         -F /dev/null

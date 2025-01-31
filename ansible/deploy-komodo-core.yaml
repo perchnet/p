@@ -1,0 +1,12 @@
+---
+- name: Deploy Komodo Core
+  ansible.builtin.import_playbook: deploy-coreos.yaml
+  vars:
+    # hostname: "komodo"
+    butane_fragments:
+      - fragments/fcos-1.4.0.bu
+      - fragments/passwd-bri.bu
+      - fragments/enable-docker.bu
+      - fragments/komodo-core.bu
+      - fragments/periphery.bu
+      - fragments/enable-sshd.bu

@@ -1,3 +1,4 @@
 - name: Combine Butane fragments
   ansible.builtin.set_fact:
-    butane: "{{ butane | combine(butane_add) }}"
+    #butane: "{{ butane | combine(butane_add) }}"
+    butane: "{{ butane | default([]) | ansible.builtin.combine(butane_add,list_merge=append_rp,recursive=true) }}"

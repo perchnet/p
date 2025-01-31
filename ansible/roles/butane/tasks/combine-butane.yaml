@@ -1,9 +1,8 @@
 - name: Read and combine Butane fragments
   block:
     - name: Read Butane fragment
-      ansible.builtin.include_vars:
-        file: "roles/butane/{{ item }}"
-        name: butane_load
+      ansible.builtin.import_tasks:
+        file: "combine-butane/load-butane-fragment.yaml"
     - name: Combine Butane fragments
-      ansible.builtin.set_fact:
-        butane: "{{ butane | default([]) | combine(butane_load) }}"
+      ansible.builtin.import_tasks:
+        file: "combine-butane/combine-butane.yaml"

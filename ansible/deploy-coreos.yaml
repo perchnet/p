@@ -17,6 +17,7 @@
       with_items: "{{ butane_fragments }}"
       ansible.builtin.include_tasks: # cannot be import_tasks
         file: "roles/butane/tasks/combine-butane.yaml"
+    - fail: msg="{{butane}}"
 
     - name: Generate hostname
       ansible.builtin.import_tasks:

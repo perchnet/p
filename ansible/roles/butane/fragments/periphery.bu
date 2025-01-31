@@ -21,15 +21,6 @@ storage:
         name: root
       group:
         name: wheel
-    - path: /etc/hostname
-      overwrite: true
-      contents:
-        inline: komodo-core
-      mode: 0555
-      user:
-        name: root
-      group:
-        name: wheel
 
 systemd:
   units:
