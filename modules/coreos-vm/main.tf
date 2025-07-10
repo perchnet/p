@@ -28,16 +28,20 @@ locals {
   coreos_password         = var.password
 
   coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${coreos_img_filename_random.result}.qcow2.xz.img"
+  
+    vm_name = coalesce(var.vm_name, random_pet.random_hostname.id)
+    vm_hostname = coalesce(var.vm_hostname, local.vm_name)
+
 
   node = var.pve_node
 }
 resource "coreos_img_filename_random" "random" {
   keepers = local.coreos_proxmoxve_stable.sha256
-  length           = 16
+  length           = 6
   special          = false
   numeric = true
   upper = false
-  lower = false
+  lower = true
 }
 
 resource "random_pet" "random_hostname" {

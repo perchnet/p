@@ -26,9 +26,15 @@ variable "pve_node" {
 }
 
 variable "vm_name" {
-  description = "VM name"
+  description = "VM name (if empty it will use a random name)"
   type        = string
-  default     = random_pet.random_hostname.id
+  default     = null
+}
+
+variable "vm_hostname" {
+  description = "VM hostname (if different from vm_name)"
+  type        = string
+  default     = null
 }
 
 variable "vm_description" {
