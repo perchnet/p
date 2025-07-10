@@ -37,7 +37,7 @@ jobs:
         uses: tailscale/github-action@v3
         with:
           oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_SECRET }}
+          oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:github-runner
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
