@@ -6,7 +6,7 @@ concurrency:
 on:
   pull_request: {}
   workflow_dispatch: {}
-  
+
 env:
   TF_CLOUD_ORGANIZATION: "perchnet"
   TF_WORKSPACE: "proxmox"
@@ -14,38 +14,57 @@ env:
 
 jobs:
   terraform-plan:
+    name: "Terraform Plan"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
       - name: Load secret
+        id: load-secrets
         uses: 1password/load-secrets-action@v2
         with:
-          export-env: true # Export loaded secrets as environment variables
+          export-env: false # Export loaded secrets as environment variables
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           TF_API_TOKEN: "op://Private/terraform-token-github-actions/credential"
+          TS_OAUTH_CLIENT_ID: "op://Private/tailscale-oauth-github-runner/username"
+          TS_OAUTH_CLIENT_SECRET: "op://Private/tailscale-oauth-github-runner/credential"
 
-      - name: Install DNSControl
-        uses: gacts/install-dnscontrol@v1
-        #with:
-        #  version: 3.20.0 # `latest` by default, but you can set a specific version to install
-        #
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
         with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_SECRET }}
           tags: tag:github-runner
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ steps.load-secrets.outputs.TF_API_TOKEN }}
 
-      - name: DNSControl preview
-        id: dnscontrol_preview
-        run: ./ci.sh cipreview
 
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
         env:
-          CLOUDFLARE_ACCOUNTID: ${{ secrets.CLOUDFLARE_ACCOUNTID }}
-          CLOUDFLARE_APITOKEN: ${{ secrets.CLOUDFLARE_APITOKEN }}
-          TSIG_CI: ${{ secrets.TSIG_CI }}
+          TF_VAR_onepassword_sdk_token: ${{secrets.OP_SERVICE_ACCOUNT_TOKEN}}
+
       - name: Find Comment
         uses: peter-evans/find-comment@v3
         id: fc
@@ -54,15 +73,39 @@ jobs:
           comment-author: github-actions[bot]
           body-includes: preview output
 
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v4
+      - uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-              ```
-              preview output:
-              ${{ steps.dnscontrol_preview.outputs.stdout }}
-              ${{ steps.dnscontrol_preview.outputs.stderr }}
-              ```
-          edit-mode: replace
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            <details><summary>Validation Output</summary>
+
+            \`\`\`\n
+            ${{ steps.validate.outputs.stdout }}
+            \`\`\`
+
+            </details>
+
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
