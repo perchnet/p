@@ -45,7 +45,7 @@ resource "random_string" "random_vm_id" {
 }
 
 resource "random_pet" "random_hostname" {
-  keepers = outputs.vm_uuid
+  keepers = output.vm_uuid
 }
 
 data "http" "coreos_stable_metadata" {
