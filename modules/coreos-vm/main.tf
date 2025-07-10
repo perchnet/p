@@ -30,7 +30,7 @@ locals {
   coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${random_string.random_vm_id.id}.qcow2.xz.img"
 
   vm_name     = coalesce(var.vm_name, random_pet.random_hostname.id)
-  vm_hostname = coalesce(var.vm_hostname, local.vm_name)
+  vm_hostname = coalesce(var.vm_hostname, vm_name)
 
 
   node = var.pve_node
