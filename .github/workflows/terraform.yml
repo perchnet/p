@@ -69,7 +69,7 @@ jobs:
           working-directory: .
           command: ${{ github.event_name == 'push' && 'apply' || 'plan' }}
           arg-lock: ${{ github.event_name == 'push' }}
-          arg-backend-config: env/dev.tfbackend
-          arg-var-file: env/dev.tfvars
-          arg-workspace: dev-use1
+          #arg-backend-config: env/dev.tfbackend
+          #arg-var-file: env/dev.tfvars
+          #arg-workspace: dev-use1
           plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}
