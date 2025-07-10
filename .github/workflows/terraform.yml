@@ -28,6 +28,8 @@ jobs:
       issues: write
     steps:
       - uses: actions/checkout@v4
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
 
       - name: Load secrets
         id: load-secrets
@@ -41,7 +43,7 @@ jobs:
           TS_OAUTH_CLIENT_ID: "op://perchnet/tailscale-oauth-github-runner/username"
           TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
           TF_VAR_onepassword_sdk_token: "op://perchnet/1p-terraform/credential"
-          SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key"
+          #SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key"
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
@@ -61,9 +63,13 @@ jobs:
 
       - name: Convert SSH Key
         id: convert-ssh-key
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          SSH_KEY_UUID: "7sa3h66bvyxryglelfxsruzzhu"
+          SSH_KEY_VAULT: "perchnet"
         run: |
-          # Convert PKCS8 to OpenSSH format using openssl
-          OPENSSH_KEY=$(echo "${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}" | openssl pkey -outform PEM 2>/dev/null)
+          # Retrieve the SSH key in OpenSSH format using a workaround
+          OPENSSH_KEY="$(op item get "${SSH_KEY_UUID}" --reveal --fields 'label=private key' --vault "${SSH_KEY_VAULT}")"
 
           # Mask the key in logs
           echo "::add-mask::$OPENSSH_KEY"
