@@ -72,7 +72,8 @@ jobs:
           OPENSSH_KEY="$(op item get "${SSH_KEY_UUID}" --reveal --fields 'label=private key' --vault "${SSH_KEY_VAULT}")"
 
           # Mask the key in logs
-          echo "::add-mask::$OPENSSH_KEY"
+          echo "::add-mask::$OPENSSH_KEY" | perl -pe 's/%/%25/g;s/\n/%0A/g;s/\r/%0D/g'
+
 
           # Write the key to a multiline-safe output file
           echo "openssh_key<<EOF" >> $GITHUB_OUTPUT
