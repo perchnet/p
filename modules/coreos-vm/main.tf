@@ -8,8 +8,14 @@ terraform {
       source  = "bpg/proxmox"
       version = "0.79"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.7.2"
+    }
   }
 }
+
 locals {
   # cloud_init_datastore_id = "zssd-files"
   coreos_platform = "proxmoxve"
@@ -21,15 +27,26 @@ locals {
   coreos_username         = var.username
   coreos_password         = var.password
 
-  coreos_img_filename = "coreos-${local.coreos_platform}.qcow2.xz.img"
+  coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${coreos_img_filename_random.result}.qcow2.xz.img"
 
   node = var.pve_node
+}
+resource "coreos_img_filename_random" "random" {
+  keepers = local.coreos_proxmoxve_stable.sha256
+  length           = 16
+  special          = false
+  numeric = true
+  upper = false
+  lower = false
+}
+
+resource "random_pet" "random_hostname" {
+  keepers = outputs.vm_uuid
 }
 
 data "http" "coreos_stable_metadata" {
   url = "https://builds.coreos.fedoraproject.org/streams/${var.stream}.json"
 }
-
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   content_type = "iso"
   datastore_id = var.pve_iso_datastore_id

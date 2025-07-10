@@ -28,7 +28,7 @@ variable "pve_node" {
 variable "vm_name" {
   description = "VM name"
   type        = string
-  default     = "coreos-vm"
+  default     = random_pet.random_hostname.id
 }
 
 variable "vm_description" {
