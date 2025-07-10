@@ -36,9 +36,9 @@ locals {
   node = var.pve_node
 }
 resource "random_string" "random_vm_id" {
-  keepers = {
-    uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
-  }
+  # keepers = {
+  #   uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
+  # }
   length  = 6
   special = false
   numeric = true
@@ -47,9 +47,9 @@ resource "random_string" "random_vm_id" {
 }
 
 resource "random_pet" "random_hostname" {
-  keepers = {
-    uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
-  }
+  # keepers = {
+  #   uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
+  # }
 }
 
 data "http" "coreos_stable_metadata" {
