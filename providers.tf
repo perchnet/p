@@ -72,7 +72,7 @@ provider "proxmox" {
   password = data.onepassword_item.proxmox_api.password
 
   ssh {
-    agent    = true
+    #agent    = true
     username = data.onepassword_item.proxmox_ssh.username
     password = data.onepassword_item.proxmox_ssh.password
   }
