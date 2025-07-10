@@ -1,0 +1,68 @@
+name: Preview
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+  
+env:
+  TF_CLOUD_ORGANIZATION: "perchnet"
+  TF_WORKSPACE: "proxmox"
+  CONFIG_DIRECTORY: "./"
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Load secret
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true # Export loaded secrets as environment variables
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          TF_API_TOKEN: "op://Private/terraform-token-github-actions/credential"
+
+      - name: Install DNSControl
+        uses: gacts/install-dnscontrol@v1
+        #with:
+        #  version: 3.20.0 # `latest` by default, but you can set a specific version to install
+        #
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:github-runner
+
+      - name: DNSControl preview
+        id: dnscontrol_preview
+        run: ./ci.sh cipreview
+
+        env:
+          CLOUDFLARE_ACCOUNTID: ${{ secrets.CLOUDFLARE_ACCOUNTID }}
+          CLOUDFLARE_APITOKEN: ${{ secrets.CLOUDFLARE_APITOKEN }}
+          TSIG_CI: ${{ secrets.TSIG_CI }}
+      - name: Find Comment
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: github-actions[bot]
+          body-includes: preview output
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+              ```
+              preview output:
+              ${{ steps.dnscontrol_preview.outputs.stdout }}
+              ${{ steps.dnscontrol_preview.outputs.stderr }}
+              ```
+          edit-mode: replace
