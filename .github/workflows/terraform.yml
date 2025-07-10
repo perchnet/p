@@ -1,4 +1,4 @@
-name: "Terraform Plan"
+name: "Terraform"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
@@ -17,12 +17,14 @@ jobs:
     name: "Terraform Plan"
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pull-requests: write
+      actions: read        # Required to identify workflow run.
+      checks: write        # Required to add status summary.
+      contents: read       # Required to checkout repository.
+      pull-requests: write # Required to add PR comment.
     steps:
       - uses: actions/checkout@v4
 
-      - name: Load secret
+      - name: Load secrets
         id: load-secrets
         uses: 1password/load-secrets-action@v2
         with:
