@@ -1,5 +1,5 @@
 variable "node" {
-  type = string
+  type    = string
   default = "pve1"
 }
 # locals {

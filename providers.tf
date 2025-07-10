@@ -32,7 +32,7 @@ terraform {
 }
 
 variable "onepassword_sdk_token" {
-  type = string
+  type      = string
   sensitive = true
 }
 

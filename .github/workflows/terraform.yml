@@ -1,0 +1,73 @@
+name: "Terraform Plan"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+
+env:
+  TF_CLOUD_ORGANIZATION: "perchnet"
+  #TF_WORKSPACE: "proxmox"
+  CONFIG_DIRECTORY: "./"
+
+jobs:
+  terraform-plan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Load secret
+        id: load-secrets
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: false # Export loaded secrets as environment variables
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          TF_ENCRYPT_PASSPHRASE: "op://perchnet/tf_encrypt_passphrase/password"
+          TF_API_TOKEN: "op://perchnet/terraform-token-github-actions/credential"
+          TS_OAUTH_CLIENT_ID: "op://perchnet/tailscale-oauth-github-runner/username"
+          TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
+          tags: tag:github-runner
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+          cli_config_credentials_token: ${{ steps.load-secrets.outputs.TF_API_TOKEN }}
+
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      # Run plan by default, or apply on merge.
+      - uses: op5dev/tf-via-pr@v13
+        with:
+          working-directory: .
+          command: ${{ github.event_name == 'push' && 'apply' || 'plan' }}
+          arg-lock: ${{ github.event_name == 'push' }}
+          arg-backend-config: env/dev.tfbackend
+          arg-var-file: env/dev.tfvars
+          arg-workspace: dev-use1
+          plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}

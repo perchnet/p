@@ -1,22 +1,22 @@
 module "coreos-module-vm" {
-    source = "./modules/coreos-vm"
-     password = onepassword_item.coreos_module_password.password
-username = onepassword_item.coreos_module_password.username
-#vm_vga_type = "serial0"
-vm_authorized_keys = [data.onepassword_item.proxmox_ssh.note_value]
-pve_disk_datastore_id = "zssd"
-pve_iso_datastore_id = "zssd-files"
-vm_agent_enabled = false
+  source   = "./modules/coreos-vm"
+  password = onepassword_item.coreos_module_password.password
+  username = onepassword_item.coreos_module_password.username
+  #vm_vga_type = "serial0"
+  vm_authorized_keys    = [data.onepassword_item.proxmox_ssh.note_value]
+  pve_disk_datastore_id = "zssd"
+  pve_iso_datastore_id  = "zssd-files"
+  vm_agent_enabled      = false
 
 }
 resource "onepassword_item" "coreos_module_password" {
   vault    = local.perchnet_vault
   title    = "coreos-module-password"
-username = "core"
-password_recipe {
+  username = "core"
+  password_recipe {
     length  = 40
     digits  = true
     letters = true
     symbols = false
-}
+  }
 }
