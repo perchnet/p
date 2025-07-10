@@ -29,9 +29,9 @@ jobs:
           export-env: false # Export loaded secrets as environment variables
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          TF_API_TOKEN: "op://Private/terraform-token-github-actions/credential"
-          TS_OAUTH_CLIENT_ID: "op://Private/tailscale-oauth-github-runner/username"
-          TS_OAUTH_CLIENT_SECRET: "op://Private/tailscale-oauth-github-runner/credential"
+          TF_API_TOKEN: "op://perchnet/terraform-token-github-actions/credential"
+          TS_OAUTH_CLIENT_ID: "op://perchnet/tailscale-oauth-github-runner/username"
+          TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
