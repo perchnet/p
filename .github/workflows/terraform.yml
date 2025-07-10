@@ -17,8 +17,8 @@ env:
   CONFIG_DIRECTORY: "./"
 
 jobs:
-  terraform-plan:
-    name: "Terraform Plan"
+  terraform:
+    name: "Terraform"
     runs-on: ubuntu-latest
     permissions:
       actions: read        # Required to identify workflow run.
@@ -28,6 +28,8 @@ jobs:
       issues: write
     steps:
       - uses: actions/checkout@v4
+      - name: Install 1Password CLI
+        uses: 1password/install-cli-action@v1
 
       - name: Load secrets
         id: load-secrets
@@ -41,6 +43,7 @@ jobs:
           TS_OAUTH_CLIENT_ID: "op://perchnet/tailscale-oauth-github-runner/username"
           TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
           TF_VAR_onepassword_sdk_token: "op://perchnet/1p-terraform/credential"
+          SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key?ssh-format=openssh"
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
@@ -54,7 +57,10 @@ jobs:
         with:
           terraform_wrapper: false
           cli_config_credentials_token: ${{ steps.load-secrets.outputs.TF_API_TOKEN }}
-
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+            ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
 
       - name: Terraform fmt
         id: fmt
