@@ -73,6 +73,10 @@ provider "proxmox" {
 
   ssh {
     #agent    = true
+    node {
+      name = var.node
+      address = proxmox.endpoint
+    }
     username = data.onepassword_item.proxmox_ssh.username
     password = data.onepassword_item.proxmox_ssh.password
   }
