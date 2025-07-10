@@ -37,7 +37,7 @@ locals {
 }
 resource "random_string" "random_vm_id" {
   keepers = {
-    sha256 = local.coreos_proxmoxve_stable.sha256
+    uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
   }
   length  = 6
   special = false
@@ -47,7 +47,9 @@ resource "random_string" "random_vm_id" {
 }
 
 resource "random_pet" "random_hostname" {
-  keepers = random_string.random_vm_id.id
+  keepers = {
+    uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
+  }
 }
 
 data "http" "coreos_stable_metadata" {
