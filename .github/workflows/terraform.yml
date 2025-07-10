@@ -17,8 +17,8 @@ env:
   CONFIG_DIRECTORY: "./"
 
 jobs:
-  terraform-plan:
-    name: "Terraform Plan"
+  terraform:
+    name: "Terraform"
     runs-on: ubuntu-latest
     permissions:
       actions: read        # Required to identify workflow run.
@@ -56,10 +56,29 @@ jobs:
           terraform_wrapper: false
           cli_config_credentials_token: ${{ steps.load-secrets.outputs.TF_API_TOKEN }}
 
+        # 1Password gives us the ssh key in PKCS#8 format, but 
+        # ssh-add requires openssh format.
+
+      - name: Convert SSH Key
+        id: convert-ssh-key
+        run: |
+          PKCS8_KEY="${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}"
+
+          # Convert PKCS8 to OpenSSH format using openssl
+          OPENSSH_KEY=$(echo "$PKCS8_KEY" | openssl pkey -outform PEM 2>/dev/null)
+
+          # Mask the key in logs
+          echo "::add-mask::$OPENSSH_KEY"
+
+          # Write the key to a multiline-safe output file
+          echo "openssh_key<<EOF" >> $GITHUB_OUTPUT
+          echo "$OPENSSH_KEY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-            ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
+            ssh-private-key: ${{ steps.convert-ssh-key.outputs.openssh_key }}
 
       - name: Terraform fmt
         id: fmt
