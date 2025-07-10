@@ -43,7 +43,7 @@ jobs:
           TS_OAUTH_CLIENT_ID: "op://perchnet/tailscale-oauth-github-runner/username"
           TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
           TF_VAR_onepassword_sdk_token: "op://perchnet/1p-terraform/credential"
-          #SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key"
+          SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key?ssh-format=openssh"
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
@@ -57,33 +57,10 @@ jobs:
         with:
           terraform_wrapper: false
           cli_config_credentials_token: ${{ steps.load-secrets.outputs.TF_API_TOKEN }}
-
-        # 1Password gives us the ssh key in PKCS#8 format, but 
-        # ssh-add requires openssh format.
-
-      - name: Convert SSH Key
-        id: convert-ssh-key
-        env:
-          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          SSH_KEY_UUID: "7sa3h66bvyxryglelfxsruzzhu"
-          SSH_KEY_VAULT: "perchnet"
-        run: |
-          # Retrieve the SSH key in OpenSSH format using a workaround
-          OPENSSH_KEY="$(op item get "${SSH_KEY_UUID}" --reveal --fields 'label=private key' --vault "${SSH_KEY_VAULT}")"
-
-          # Mask the key in logs
-          echo "::add-mask::$OPENSSH_KEY" | perl -pe 's/%/%25/g;s/\n/%0A/g;s/\r/%0D/g'
-
-
-          # Write the key to a multiline-safe output file
-          echo "openssh_key<<EOF" >> $GITHUB_OUTPUT
-          echo "$OPENSSH_KEY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
-            ssh-private-key: ${{ steps.convert-ssh-key.outputs.openssh_key }}
+            ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
 
       - name: Terraform fmt
         id: fmt
