@@ -8,8 +8,14 @@ terraform {
       source  = "bpg/proxmox"
       version = "0.79"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "3.7.2"
+    }
   }
 }
+
 locals {
   # cloud_init_datastore_id = "zssd-files"
   coreos_platform = "proxmoxve"
@@ -21,15 +27,34 @@ locals {
   coreos_username         = var.username
   coreos_password         = var.password
 
-  coreos_img_filename = "coreos-${local.coreos_platform}.qcow2.xz.img"
+  coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${random_string.random_vm_id.id}.qcow2.xz.img"
+
+  vm_name     = coalesce(var.vm_name, random_pet.random_hostname.id)
+  vm_hostname = coalesce(var.vm_hostname, local.vm_name)
+
 
   node = var.pve_node
+}
+resource "random_string" "random_vm_id" {
+  # keepers = {
+  #   uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
+  # }
+  length  = 6
+  special = false
+  numeric = true
+  upper   = false
+  lower   = true
+}
+
+resource "random_pet" "random_hostname" {
+  # keepers = {
+  #   uuid = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
+  # }
 }
 
 data "http" "coreos_stable_metadata" {
   url = "https://builds.coreos.fedoraproject.org/streams/${var.stream}.json"
 }
-
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   content_type = "iso"
   datastore_id = var.pve_iso_datastore_id
@@ -117,6 +142,6 @@ resource "proxmox_virtual_environment_file" "cloud_user_config" {
 
   source_raw {
     data      = data.ct_config.fedora-coreos-config.rendered
-    file_name = "test.butane-ci-user-data.ign"
+    file_name = "${local.vm_name}.${random_string.random_vm_id.id}.butane-ci-user-data.ign"
   }
 }
