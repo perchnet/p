@@ -27,7 +27,7 @@ locals {
   coreos_username         = var.username
   coreos_password         = var.password
 
-  coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${coreos_img_filename_random.result}.qcow2.xz.img"
+  coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${random_string.random_vm_id.result}.qcow2.xz.img"
   
     vm_name = coalesce(var.vm_name, random_pet.random_hostname.id)
     vm_hostname = coalesce(var.vm_hostname, local.vm_name)
@@ -35,7 +35,7 @@ locals {
 
   node = var.pve_node
 }
-resource "coreos_img_filename_random" "random" {
+resource "random_string" "random_vm_id" {
   keepers = local.coreos_proxmoxve_stable.sha256
   length           = 6
   special          = false
@@ -138,6 +138,6 @@ resource "proxmox_virtual_environment_file" "cloud_user_config" {
 
   source_raw {
     data      = data.ct_config.fedora-coreos-config.rendered
-    file_name = "test.butane-ci-user-data.ign"
+    file_name = "${local.vm_name}.${random_string.random_vm_id.result}.butane-ci-user-data.ign"
   }
 }
