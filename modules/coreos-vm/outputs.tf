@@ -4,7 +4,7 @@ output "vm_id" {
 }
 output "vm_uuid" {
   description = "proxmox vm uuid"
-  value =  proxmox_virtual_environment_vm.coreos_vm.smbios.uuid
+  value =  proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
 }
 output "vm_name" {
   description = "vm name"
