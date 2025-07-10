@@ -9,7 +9,7 @@ on:
 
 env:
   TF_CLOUD_ORGANIZATION: "perchnet"
-  TF_WORKSPACE: "proxmox"
+  #TF_WORKSPACE: "proxmox"
   CONFIG_DIRECTORY: "./"
 
 jobs:
