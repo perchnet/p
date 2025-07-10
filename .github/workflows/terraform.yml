@@ -62,10 +62,8 @@ jobs:
       - name: Convert SSH Key
         id: convert-ssh-key
         run: |
-          PKCS8_KEY="${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}"
-
           # Convert PKCS8 to OpenSSH format using openssl
-          OPENSSH_KEY=$(echo "$PKCS8_KEY" | openssl pkey -outform PEM 2>/dev/null)
+          OPENSSH_KEY=$(echo "${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}" | openssl pkey -outform PEM 2>/dev/null)
 
           # Mask the key in logs
           echo "::add-mask::$OPENSSH_KEY"
