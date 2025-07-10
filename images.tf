@@ -29,8 +29,8 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_noble_cloud_image" 
 }
 
 resource "proxmox_virtual_environment_download_file" "ubuntu_jammy_cloud_image" {
-  content_type       = "iso"
-  datastore_id       = "zssd-files"
+  content_type = "iso"
+  datastore_id = "zssd-files"
   node_name    = var.node
   url          = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
 }

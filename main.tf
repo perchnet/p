@@ -13,7 +13,7 @@ locals {
   ### PLEASE FOR THE LOVE OF GOD DO NOT CHANGE THIS ###
   ### PLEASE FOR THE LOVE OF GOD DO NOT CHANGE THIS ###
   ### PLEASE FOR THE LOVE OF GOD DO NOT CHANGE THIS ###
-  talos_image     = "https://factory.talos.dev/image/58e4656b31857557c8bad0585e1b2ee53f7446f4218f3fae486aa26d4f6470d8/v1.9.2/nocloud-amd64.raw.zst"
+  talos_image = "https://factory.talos.dev/image/58e4656b31857557c8bad0585e1b2ee53f7446f4218f3fae486aa26d4f6470d8/v1.9.2/nocloud-amd64.raw.zst"
   ### PLEASE FOR THE LOVE OF GOD DO NOT CHANGE THIS ###
   ### PLEASE FOR THE LOVE OF GOD DO NOT CHANGE THIS ###
   ### PLEASE FOR THE LOVE OF GOD DO NOT CHANGE THIS ###

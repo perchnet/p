@@ -47,7 +47,7 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
   node_name   = local.node
   name        = var.vm_name
   description = var.vm_description
-  
+
   tags = concat(var.vm_tags, [var.vm_managed_tag])
 
   started = true

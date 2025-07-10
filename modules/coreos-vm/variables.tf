@@ -63,8 +63,8 @@ variable "vm_cloud_init_datastore_id" {
 
 variable "vm_snippets_datastore_id" {
   description = "snippets datastore id"
-  type = string
-  default = "snippets"
+  type        = string
+  default     = "snippets"
 }
 
 variable "pve_iso_datastore_id" {
@@ -117,8 +117,8 @@ variable "vm_cpu_sockets" {
 
 variable "vm_network_bridge" {
   description = "ethernet bridge"
-  type = string
-  default = "vmbr0"
+  type        = string
+  default     = "vmbr0"
 }
 
 variable "vm_managed_tag" {
