@@ -2,9 +2,9 @@ output "vm_id" {
   description = "proxmox vm id"
   value       = proxmox_virtual_environment_vm.coreos_vm.vm_id
 }
-output "vm_uuid" {
-  description = "proxmox vm uuid"
-  value       = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
+output "vm_mac0" {
+  description = "proxmox vm 0th mac"
+  value       = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac
 }
 output "vm_name" {
   description = "vm name"
