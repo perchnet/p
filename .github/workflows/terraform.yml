@@ -43,7 +43,7 @@ jobs:
           TS_OAUTH_CLIENT_ID: "op://perchnet/tailscale-oauth-github-runner/username"
           TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
           TF_VAR_onepassword_sdk_token: "op://perchnet/1p-terraform/credential"
-          SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key?ssh-format=openssh"
+          #SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key?ssh-format=openssh"
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
@@ -80,8 +80,8 @@ jobs:
           TF_VAR_onepassword_sdk_token: ${{ steps.load-secrets.outputs.TF_VAR_onepassword_sdk_token }}
         with:
           working-directory: .
-          command: ${{ github.event_name == 'push' && 'apply' || 'plan' }}
-          arg-lock: ${{ github.event_name == 'push' }}
+          command: ${{ github.event_name == 'merge_group' && 'apply' || 'plan' }}
+          arg-lock: ${{ github.event_name == 'merge_group' }}
           #arg-backend-config: env/dev.tfbackend
           #arg-var-file: env/dev.tfvars
           #arg-workspace: dev-use1
