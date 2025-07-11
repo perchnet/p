@@ -26,11 +26,11 @@ locals {
 resource "github_repository" "p_repository" {
   name = "p"
 
-  allow_auto_merge            = false
+  allow_auto_merge            = true
   allow_merge_commit          = true
   allow_rebase_merge          = true
   allow_squash_merge          = true
-  allow_update_branch         = false
+  allow_update_branch         = true
   archived                    = false
   delete_branch_on_merge      = false
   description                 = null
@@ -41,8 +41,8 @@ resource "github_repository" "p_repository" {
   has_wiki                    = false
   homepage_url                = null
   is_template                 = false
-  merge_commit_message        = "PR_TITLE"
-  merge_commit_title          = "MERGE_MESSAGE"
+  merge_commit_message        = "PR_BODY"
+  merge_commit_title          = "PR_TITLE"
   squash_merge_commit_message = "COMMIT_MESSAGES"
   squash_merge_commit_title   = "COMMIT_OR_PR_TITLE"
   topics                      = []
