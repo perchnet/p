@@ -48,7 +48,7 @@ data "onepassword_item" "proxmox_api" {
 
 locals {
   perchnet_vault = data.onepassword_vault.perchnet_vault.uuid
-  pve_endpoint = "https://pve1.shark-perch.ts.net"
+  pve_endpoint   = "https://pve1.shark-perch.ts.net"
 }
 data "onepassword_vault" "perchnet_vault" {
   name = "perchnet"
@@ -75,7 +75,7 @@ provider "proxmox" {
   ssh {
     #agent    = true
     node {
-      name = var.node
+      name    = var.node
       address = local.pve_endpoint
     }
     username = data.onepassword_item.proxmox_ssh.username
