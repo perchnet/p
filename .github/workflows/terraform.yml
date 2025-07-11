@@ -92,7 +92,7 @@ jobs:
         run: |
           # Compose TFLint output.
           tflint='${{ steps.tflint.outputs.stderr || steps.tflint.outputs.stdout }}'
-          tflint="<details><summary>TFLint error.</summary>
+          tflint="<details><summary>## TFLint error.</summary>
 
           \`\`\`hcl
           $(echo "$tflint" | sed 's/`/\\`/g')
@@ -120,7 +120,6 @@ jobs:
           arg-lock: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
           format: true
           arg-refresh: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'false' || 'true' }} # Skip refresh on apply.
-          #arg-backend-config: env/dev.tfbackend
-          #arg-var-file: env/dev.tfvars
-          #arg-workspace: dev-use1
+          expand-summary: true
+          plan-parity: true
           plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}
