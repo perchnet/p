@@ -141,9 +141,7 @@ data "ct_config" "fedora-coreos-config" {
   pretty_print = true
 
   snippets = [
-    templatefile("${path.module}/ct/autorebase.yaml.tftpl", {
-      target_image = "ghcr.io/ublue-os/ucore-hci:stable"
-    }),
+    file("${path.module}/ct/fcos-snippet.yaml"),
   ]
 }
 resource "htpasswd_password" "password_hash" {
