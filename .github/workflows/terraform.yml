@@ -92,7 +92,8 @@ jobs:
         run: |
           # Compose TFLint output.
           tflint='${{ steps.tflint.outputs.stderr || steps.tflint.outputs.stdout }}'
-          tflint="<details><summary>## TFLint error.</summary>
+          tflint="### TFLint errors:
+          <details><summary>TFLint error.</summary>
 
           \`\`\`hcl
           $(echo "$tflint" | sed 's/`/\\`/g')
