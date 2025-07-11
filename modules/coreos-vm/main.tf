@@ -135,7 +135,7 @@ data "ct_config" "fedora-coreos-config" {
     hostname      = local.vm_hostname,
     sshkeys       = var.vm_authorized_keys,
     username      = local.coreos_username,
-    password_hash = htpasswd_password.password_hash.sha512,
+    password_hash = htpasswd_password.password_hash.bcrypt,
   })
   strict       = true
   pretty_print = true
