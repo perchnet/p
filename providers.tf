@@ -67,7 +67,7 @@ data "onepassword_item" "proxmox_ssh" {
 
 # Provide SSH access to all nodes as well as an admin API token
 provider "proxmox" {
-  endpoint = "https://pve1.shark-perch.ts.net"
+  endpoint = local.pve_endpoint
   insecure = false
   #api_token = data.onepassword_item.proxmox_token.credential
   username = data.onepassword_item.proxmox_api.username
