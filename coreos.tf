@@ -17,6 +17,12 @@ module "coreos-module-vm2" {
   pve_disk_datastore_id = "zssd"
   pve_iso_datastore_id  = "zssd-files"
   vm_agent_enabled      = false
+  extra_butane_snippets = [
+    templatefile("./modules/coreos-vm/ct/autorebase.yaml.tftpl", {
+      target_image = "ghcr.io/ublue-os/ucore-hci:stable"
+    }),
+    file("./modules/coreos-vm/ct/setup-periphery.yaml")
+  ]
 }
 resource "onepassword_item" "coreos_module_password" {
   vault    = local.perchnet_vault

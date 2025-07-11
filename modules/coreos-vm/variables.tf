@@ -109,3 +109,9 @@ variable "vm_tags" {
   type        = list(string)
   default     = []
 }
+
+variable "extra_butane_snippets" {
+  description = "additional butane snippets to  include"
+  type        = list(string)
+  default     = []
+}

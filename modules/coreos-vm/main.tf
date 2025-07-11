@@ -37,7 +37,7 @@ locals {
   coreos_username         = var.username
   coreos_password         = var.password
 
-  coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${random_string.random_vm_id.id}.qcow2.xz.img"
+  coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${substr(local.download_sum, 0, 8)}.qcow2.xz.img"
 
   vm_name     = coalesce(var.vm_name, random_pet.random_hostname.id)
   vm_hostname = coalesce(var.vm_hostname, local.vm_name)
@@ -128,6 +128,13 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
   }
 }
 
+locals {
+  butanes = coalescelist(var.extra_butane_snippets, [
+    templatefile("${path.module}/ct/autorebase.yaml.tftpl", {
+      target_image = "ghcr.io/ublue-os/ucore-hci:stable"
+    }),
+  ])
+}
 # Butane Config for Fedora CoreOS
 data "ct_config" "fedora-coreos-config" {
   content = templatefile("${path.module}/ct/fcos.yaml.tftpl", {
@@ -140,24 +147,24 @@ data "ct_config" "fedora-coreos-config" {
   strict       = true
   pretty_print = true
 
-  snippets = [
-    templatefile("${path.module}/ct/autorebase.yaml.tftpl", {
-      target_image = "ghcr.io/ublue-os/ucore-hci:stable"
-    }),
-  ]
+  snippets = local.butanes
 }
 resource "htpasswd_password" "password_hash" {
   password = local.coreos_password
 }
 
 # Render as Ignition
+
+locals {
+  ignition_hash = substr(sha256(data.ct_config.fedora-coreos-config.rendered), -8)
+}
+
 resource "proxmox_virtual_environment_file" "cloud_user_config" {
   content_type = "snippets"
   datastore_id = var.vm_snippets_datastore_id
   node_name    = var.pve_node
-
   source_raw {
     data      = data.ct_config.fedora-coreos-config.rendered
-    file_name = "${local.vm_name}.${random_string.random_vm_id.id}.butane-ci-user-data.ign"
+    file_name = "${local.vm_name}.${local.ignition_hash}.butane-ci-user-data.ign"
   }
 }
