@@ -103,7 +103,7 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
     interface    = "scsi0"
     datastore_id = var.pve_disk_datastore_id
     file_id      = proxmox_virtual_environment_download_file.coreos_img.id
-    size         = 32
+    size         = var.vm_disk_size
   }
 
   # We need a network connection so that we can install the guest agent
@@ -122,9 +122,9 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
 data "ct_config" "fedora-coreos-config" {
   content = templatefile("${path.module}/ct/fcos.yaml.tftpl", {
     message       = "Hello World!",
-    hostname      = var.vm_hostname,
+    hostname      = local.vm_hostname,
     sshkeys       = var.vm_authorized_keys,
-    username      = var.username,
+    username      = local.coreos_username,
     password_hash = terraform_data.password_hash.output,
   })
   strict       = true
