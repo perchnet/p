@@ -13,11 +13,16 @@ storage:
         inline: |
           ${message}
       overwrite: true
+    - path: /etc/hostname
+      mode: 0644
+      contents:
+        inline: ${hostname}
+      overwrite: true
 
 passwd:
   users:
     - name: ${username}
-      password_hash:  "$y$j9T$hbiby344x5DWtMng5zf4SMMp$24xGfMZhMsbH6u/TB3FOZFtpGFrMa90i.OqpOOI0Cf2"
+      password_hash:  "${password_hash}"
       ssh_authorized_keys:
         %{ for sshkey in sshkeys ~}
         - ssh-key ${trimspace(sshkey)}
