@@ -2,8 +2,26 @@
 
 provider "github" {
   owner = "perchnet"
+  app_auth {
+    id              = local.gh_app_id
+    installation_id = local.gh_app_installation_id
+    pem_file        = local.gh_app_pem_file
+  }
 }
+data "onepassword_item" "github_infra_app" {
+  vault = local.perchnet_vault
+  title = "github-infra-app"
+}
+locals {
+  section_data = data.onepassword_item.github_infra_app.section[index(data.onepassword_item.github_infra_app.section[*].label, "data")]
 
+  gh_app_creds = { for field in local.section_data.field : field.label => field.value }
+
+  gh_app_pem_file        = local.gh_app_creds["gh_app_pem_file"]
+  gh_app_id              = local.gh_app_creds["gh_app_id"]
+  gh_app_installation_id = local.gh_app_creds["gh_app_installation_id"]
+
+}
 # This repository
 # resource "github_repository" "p_repository" {
 #   name = "p"
