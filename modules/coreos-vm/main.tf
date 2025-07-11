@@ -46,9 +46,9 @@ locals {
   node = var.pve_node
 }
 resource "random_string" "random_vm_id" {
-  keepers = {
-    uuid = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac_address
-  }
+  # keepers = {
+  #   uuid = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac_address
+  # }
   length  = 6
   special = false
   numeric = true
