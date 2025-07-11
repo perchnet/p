@@ -117,9 +117,10 @@ jobs:
           TF_VAR_onepassword_sdk_token: ${{ steps.load-secrets.outputs.TF_VAR_onepassword_sdk_token }}
         with:
           working-directory: .
-          command: ${{ github.event_name == 'merge_group' && 'apply' || 'plan' }}
-          arg-lock: ${{ github.event_name == 'merge_group' }}
-          arg-refresh: ${{ github.event_name == 'merge_group' && 'false' || 'true' }} # Skip refresh on apply.
+          command: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'apply' || 'plan' }}
+          arg-lock: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
+          format: true
+          arg-refresh: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'false' || 'true' }} # Skip refresh on apply.
           #arg-backend-config: env/dev.tfbackend
           #arg-var-file: env/dev.tfvars
           #arg-workspace: dev-use1
