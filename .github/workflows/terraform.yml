@@ -60,21 +60,58 @@ jobs:
       #   uses: webfactory/ssh-agent@v0.9.0
       #   with:
       #       ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
+      - name: Init TF
+        id: tf
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: op5dev/tf-via-pr@v13
+        with:
+          working-directory: path/to/directory
+          command: init
+          arg-lock: false
+          format: true
+          validate: true
 
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
+      - name: Setup TFLint
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_wrapper: true
+
+      - name: Run TFLint
+        id: tflint
+        if: ${{ github.event_name == 'pull_request' }}
+        working-directory: path/to/directory
+        run: |
+          tflint --init
+          tflint --format compact
         continue-on-error: true
 
-      - name: Terraform Init
-        id: init
-        run: terraform init -input=false
+      - name: Comment if TFLint errors
+        if: ${{ github.event_name == 'pull_request' && steps.tflint.outputs.exitcode != 0 }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Compose TFLint output.
+          tflint='${{ steps.tflint.outputs.stderr || steps.tflint.outputs.stdout }}'
+          tflint="<details><summary>TFLint error.</summary>
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
+          \`\`\`hcl
+          $(echo "$tflint" | sed 's/`/\\`/g')
+          \`\`\`
+          </details>"
 
-      # Run plan by default, or apply on merge.
+          # Get body of PR comment from tf step output.
+          comment=$(gh api /repos/{owner}/{repo}/issues/comments/${{ steps.tf.outputs.comment-id }} --method GET --jq '.body')
+
+          # Replace placeholder with TFLint output.
+          comment="${comment//<!-- placeholder-2 -->/$tflint}"
+
+          # Update PR comment combined with TFLint output.
+          gh api /repos/{owner}/{repo}/issues/comments/${{ steps.tf.outputs.comment-id }} --method PATCH --field body="$comment"
+
+          # Exit workflow due to TFLint error.
+          exit 1
+
       - uses: op5dev/tf-via-pr@v13
         env:
           TF_VAR_onepassword_sdk_token: ${{ steps.load-secrets.outputs.TF_VAR_onepassword_sdk_token }}
@@ -82,6 +119,7 @@ jobs:
           working-directory: .
           command: ${{ github.event_name == 'merge_group' && 'apply' || 'plan' }}
           arg-lock: ${{ github.event_name == 'merge_group' }}
+          arg-refresh: ${{ github.event_name == 'merge_group' && 'false' || 'true' }} # Skip refresh on apply.
           #arg-backend-config: env/dev.tfbackend
           #arg-var-file: env/dev.tfvars
           #arg-workspace: dev-use1
