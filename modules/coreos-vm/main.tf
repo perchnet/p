@@ -19,7 +19,7 @@ terraform {
 locals {
   # cloud_init_datastore_id = "zssd-files"
   coreos_platform = "proxmoxve"
-  metadata        = jsondecode(data.http.coreos_stable_metadata.response_body)
+  metadata        = jsondecode(data.http.coreos_stream_metadata.response_body)
 
   coreos_proxmoxve_stable = local.metadata.architectures.x86_64.artifacts.proxmoxve.formats["qcow2.xz"].disk
   download_url            = local.coreos_proxmoxve_stable.location
@@ -52,7 +52,7 @@ resource "random_pet" "random_hostname" {
   # }
 }
 
-data "http" "coreos_stable_metadata" {
+data "http" "coreos_stream_metadata" {
   url = "https://builds.coreos.fedoraproject.org/streams/${var.stream}.json"
 }
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
@@ -70,7 +70,7 @@ resource "proxmox_virtual_environment_download_file" "coreos_img" {
 resource "proxmox_virtual_environment_vm" "coreos_vm" {
   # This must be the name of your Proxmox node within Proxmox
   node_name   = local.node
-  name        = var.vm_name
+  name        = local.vm_name
   description = var.vm_description
 
   tags = concat(var.vm_tags, [var.vm_managed_tag])
@@ -103,7 +103,7 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
     interface    = "scsi0"
     datastore_id = var.pve_disk_datastore_id
     file_id      = proxmox_virtual_environment_download_file.coreos_img.id
-    size         = 32
+    size         = var.vm_disk_size
   }
 
   # We need a network connection so that we can install the guest agent
@@ -120,11 +120,12 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
 
 # Butane Config for Fedora CoreOS
 data "ct_config" "fedora-coreos-config" {
-  content = templatefile("${path.module}/ct/fcos.yaml", {
-    message  = "Hello World!",
-    sshkeys  = var.vm_authorized_keys,
-    username = var.username,
-    password = var.password,
+  content = templatefile("${path.module}/ct/fcos.yaml.tftpl", {
+    message       = "Hello World!",
+    hostname      = local.vm_hostname,
+    sshkeys       = var.vm_authorized_keys,
+    username      = local.coreos_username,
+    password_hash = terraform_data.password_hash.output,
   })
   strict       = true
   pretty_print = true
@@ -132,6 +133,14 @@ data "ct_config" "fedora-coreos-config" {
   snippets = [
     file("${path.module}/ct/fcos-snippet.yaml"),
   ]
+}
+resource "terraform_data" "password_hash" {
+  triggers_replace = [
+    var.username,
+    var.password,
+  ]
+
+  input = bcrypt(var.password)
 }
 
 # Render as Ignition

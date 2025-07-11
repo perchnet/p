@@ -1,6 +1,7 @@
 variable "username" {
   description = "initial username"
   type        = string
+  default     = "core"
 }
 variable "password" {
   description = "initial user's password"
@@ -83,6 +84,12 @@ variable "pve_disk_datastore_id" {
   description = "Disk datastore ID"
   type        = string
   default     = "local"
+}
+
+variable "vm_disk_size" {
+  description = "VM disk size in GB"
+  type        = number
+  default     = 20
 }
 
 variable "vm_scsi_type" {
