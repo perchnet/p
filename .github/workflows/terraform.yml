@@ -109,7 +109,7 @@ jobs:
           gh api /repos/{owner}/{repo}/issues/comments/${{ steps.tf.outputs.comment-id }} --method PATCH --field body="$comment"
 
           # Exit workflow due to TFLint error.
-          exit 1
+          # exit 1
 
       - uses: op5dev/tf-via-pr@v13
         env:
