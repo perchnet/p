@@ -44,11 +44,6 @@ data "onepassword_vault" "perchnet_vault" {
   name = "perchnet"
 }
 
-data "onepassword_item" "proxmox_token" {
-  vault = local.perchnet_vault
-  title = "proxmox-api-token"
-}
-
 data "onepassword_item" "proxmox_ssh" {
   vault = local.perchnet_vault
   title = "proxmox-ssh"

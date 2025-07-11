@@ -1,4 +1,5 @@
 terraform {
+  required_version = ">= 1.0"
   required_providers {
     ct = { # CoreOS Transpiler
       source  = "poseidon/ct"
@@ -9,10 +10,19 @@ terraform {
       version = "0.79"
     }
 
+    http = {
+      source  = "hashicorp/http"
+      version = ">= 3.5.0"
+    }
     random = {
       source  = "hashicorp/random"
       version = "3.7.2"
     }
+    htpasswd = {
+      source  = "loafoe/htpasswd"
+      version = ">= 1.2.1"
+    }
+
   }
 }
 
@@ -125,7 +135,7 @@ data "ct_config" "fedora-coreos-config" {
     hostname      = local.vm_hostname,
     sshkeys       = var.vm_authorized_keys,
     username      = local.coreos_username,
-    password_hash = terraform_data.password_hash.output,
+    password_hash = htpasswd_password.password_hash.sha512,
   })
   strict       = true
   pretty_print = true
@@ -134,13 +144,8 @@ data "ct_config" "fedora-coreos-config" {
     file("${path.module}/ct/fcos-snippet.yaml"),
   ]
 }
-resource "terraform_data" "password_hash" {
-  triggers_replace = [
-    local.coreos_username,
-    local.coreos_password,
-  ]
-
-  input = bcrypt(local.coreos_password)
+resource "htpasswd_password" "password_hash" {
+  password = local.coreos_password
 }
 
 # Render as Ignition
