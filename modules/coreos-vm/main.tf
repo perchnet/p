@@ -156,7 +156,7 @@ resource "htpasswd_password" "password_hash" {
 # Render as Ignition
 
 locals {
-  ignition_hash = substr(sha256(data.ct_config.fedora-coreos-config.rendered), -8)
+  ignition_hash = substr(sha256(data.ct_config.fedora-coreos-config.rendered), 0, 8)
 }
 
 resource "proxmox_virtual_environment_file" "cloud_user_config" {
