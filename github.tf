@@ -1,13 +1,9 @@
 # Configure the GitHub Provider
+
 provider "github" {
   owner = "perchnet"
 }
 
-# github app credentials
-data "onepassword_item" "github_infra_app" {
-  title = "github-infra-app"
-  vault = local.perchnet_vault
-}
 # This repository
 # resource "github_repository" "p_repository" {
 #   name = "p"

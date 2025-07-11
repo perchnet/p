@@ -14,12 +14,6 @@ variable "stream" {
   default     = "testing" # proxmoxve isn't in stable yet
 }
 
-variable "platform" {
-  description = "The CoreOS platform name"
-  type        = string
-  default     = "proxmoxve"
-}
-
 variable "pve_node" {
   description = "Proxmox VE node name"
   type        = string
@@ -48,12 +42,6 @@ variable "vm_vga_type" {
   description = "VM VGA type"
   type        = string
   default     = "serial0"
-}
-
-variable "vm_serial_enabled" {
-  description = "vm serial port"
-  type        = bool
-  default     = true
 }
 
 variable "vm_authorized_keys" {
@@ -92,18 +80,6 @@ variable "vm_disk_size" {
   default     = 20
 }
 
-variable "vm_scsi_type" {
-  description = "VM scsi type"
-  type        = string
-  default     = "virtio-scsi-single"
-}
-
-variable "vm_started" {
-  description = "VM started"
-  type        = bool
-  default     = true
-}
-
 variable "vm_agent_enabled" {
   description = "VM agent enabled"
   type        = bool
@@ -114,18 +90,6 @@ variable "vm_memory" {
   description = "VM memory in MB"
   type        = number
   default     = 2048
-}
-
-variable "vm_cpu_cores" {
-  description = "VM CPU cores"
-  type        = number
-  default     = 2
-}
-
-variable "vm_cpu_sockets" {
-  description = "VM CPU sockets"
-  type        = number
-  default     = 1
 }
 
 variable "vm_network_bridge" {
