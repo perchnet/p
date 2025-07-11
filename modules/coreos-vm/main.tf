@@ -136,11 +136,11 @@ data "ct_config" "fedora-coreos-config" {
 }
 resource "terraform_data" "password_hash" {
   triggers_replace = [
-    var.username,
-    var.password,
+    local.coreos_username,
+    local.coreos_password,
   ]
 
-  input = bcrypt(var.password)
+  input = bcrypt(local.coreos_password)
 }
 
 # Render as Ignition
