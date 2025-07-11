@@ -56,10 +56,10 @@ jobs:
         with:
           terraform_wrapper: false
           cli_config_credentials_token: ${{ steps.load-secrets.outputs.TF_API_TOKEN }}
-      - name: Setup SSH Agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-            ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
+      # - name: Setup SSH Agent
+      #   uses: webfactory/ssh-agent@v0.9.0
+      #   with:
+      #       ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
 
       - name: Terraform fmt
         id: fmt
