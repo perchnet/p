@@ -119,11 +119,8 @@ jobs:
           working-directory: .
           command: ${{ github.event_name == 'merge_group' && 'apply' || 'plan' }}
           arg-lock: ${{ github.event_name == 'merge_group' }}
-<<<<<<< HEAD
           arg-refresh: ${{ github.event_name == 'merge_group' && 'false' || 'true' }} # Skip refresh on apply.
-=======
           #arg-backend-config: env/dev.tfbackend
           #arg-var-file: env/dev.tfvars
           #arg-workspace: dev-use1
->>>>>>> origin/main
           plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}
