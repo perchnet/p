@@ -59,3 +59,55 @@ resource "github_repository" "p_repository" {
     }
   }
 }
+
+resource "github_repository_ruleset" "p_merge_queue" {
+  repository  = github_repository.p_repository.name
+  enforcement = "active"
+  name        = "merge queue"
+  rules {
+    creation                      = false
+    deletion                      = true
+    non_fast_forward              = true
+    required_linear_history       = true
+    required_signatures           = false
+    update                        = false
+    update_allows_fetch_and_merge = false
+
+    merge_queue {
+      check_response_timeout_minutes    = 60
+      grouping_strategy                 = "ALLGREEN"
+      max_entries_to_build              = 5
+      max_entries_to_merge              = 5
+      merge_method                      = "SQUASH"
+      min_entries_to_merge              = 1
+      min_entries_to_merge_wait_minutes = 5
+    }
+
+    required_status_checks {
+      do_not_enforce_on_create             = false
+      strict_required_status_checks_policy = true
+
+      required_check {
+        context        = "Terraform"
+        integration_id = 15368
+      }
+    }
+  }
+  target = "branch"
+
+  bypass_actors {
+    actor_id    = 0
+    actor_type  = "OrganizationAdmin"
+    bypass_mode = "always"
+  }
+
+  conditions {
+    ref_name {
+      exclude = []
+      include = [
+        "~DEFAULT_BRANCH",
+      ]
+    }
+  }
+
+}
