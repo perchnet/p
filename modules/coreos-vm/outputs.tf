@@ -2,10 +2,10 @@ output "vm_id" {
   description = "proxmox vm id"
   value       = proxmox_virtual_environment_vm.coreos_vm.vm_id
 }
-output "vm_mac0" {
-  description = "proxmox vm 0th mac"
-  value       = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac_address
-}
+# output "vm_mac0" {
+#   description = "proxmox vm 0th mac"
+#   value       = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac_address
+# }
 output "vm_name" {
   description = "vm name"
   value       = proxmox_virtual_environment_vm.coreos_vm.name
