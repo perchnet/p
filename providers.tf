@@ -48,7 +48,7 @@ data "onepassword_item" "proxmox_api" {
 
 locals {
   perchnet_vault = data.onepassword_vault.perchnet_vault.uuid
-  pve_address = "pve1.shark-perch.ts.net"
+  pve_address    = "pve1.shark-perch.ts.net"
   pve_endpoint   = "https://${local.pve_address}"
 }
 data "onepassword_vault" "perchnet_vault" {
