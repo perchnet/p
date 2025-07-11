@@ -121,6 +121,6 @@ jobs:
           arg-lock: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
           format: true
           arg-refresh: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'false' || 'true' }} # Skip refresh on apply.
-          expand-summary: true
+          expand-diff: true
           plan-parity: true
           plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}
