@@ -80,7 +80,6 @@ jobs:
       - name: Run TFLint
         id: tflint
         if: ${{ github.event_name == 'pull_request' }}
-        working-directory: path/to/directory
         run: |
           tflint --init
           tflint --format compact
