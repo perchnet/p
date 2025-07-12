@@ -37,8 +37,6 @@ data "onepassword_item" "proxmox_api" {
 
 locals {
   perchnet_vault = data.onepassword_vault.perchnet_vault.uuid
-  pve_address    = "pve1.shark-perch.ts.net"
-  pve_endpoint   = "https://${local.pve_address}"
 }
 data "onepassword_vault" "perchnet_vault" {
   name = "perchnet"
@@ -49,21 +47,41 @@ data "onepassword_item" "proxmox_ssh" {
   title = "proxmox-ssh"
 }
 
+locals {
+  # Proxmox connection settings
+  pve_host = "pve1.shark-perch.ts.net"
+  pve_port = 443
+  pve_node = "pve1"
+
+  # Credentials (fetched from OnePassword or any secrets manager)
+  pve_api_username = data.onepassword_item.proxmox_api.username
+  pve_api_password = sensitive(data.onepassword_item.proxmox_api.password)
+  pve_ssh_username = data.onepassword_item.proxmox_ssh.username
+  pve_ssh_password = sensitive(data.onepassword_item.proxmox_ssh.password)
+
+  # Full endpoint
+  pve_endpoint = "https://${local.pve_host}:${local.pve_port}"
+  pve_insecure = false
+
+  # SSH address (same as host for most use cases)
+  pve_ssh_address = local.pve_host
+}
 # Provide SSH access to all nodes as well as an admin API token
 provider "proxmox" {
   endpoint = local.pve_endpoint
-  insecure = false
-  #api_token = data.onepassword_item.proxmox_token.credential
-  username = data.onepassword_item.proxmox_api.username
-  password = data.onepassword_item.proxmox_api.password
+  insecure = local.pve_insecure
+
+  username = local.pve_api_username
+  password = local.pve_api_password
 
   ssh {
-    #agent    = true
+    username = local.pve_ssh_username
+    password = local.pve_ssh_password
+
+    #private_key = data.external.proxmox_ssh_pem.result["pem_key"]
     node {
-      name    = var.node
-      address = local.pve_address
+      name    = local.pve_node
+      address = local.pve_ssh_address
     }
-    username = data.onepassword_item.proxmox_ssh.username
-    password = data.onepassword_item.proxmox_ssh.password
   }
 }

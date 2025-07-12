@@ -9,6 +9,7 @@ systemd:
         Description=Download and set up Komodo Periphery
         After=network-online.target
         Wants=network-online.target
+        ConditionPathExists=!/etc/ucore-autorebase/signed
         [Service]
         Type=oneshot
         #StandardOutput=journal+console

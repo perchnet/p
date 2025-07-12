@@ -26,6 +26,25 @@ terraform {
   }
 }
 
+provider "proxmox" {
+  endpoint = "https://${var.proxmox_host}:${var.proxmox_port}"
+  insecure = var.verify_ssl
+
+  username = var.pve_username
+  password = var.password
+
+  ssh {
+    username = var.pve_ssh_username
+    password = var.pve_ssh_password
+
+    private_key = var.pve_private_key
+    node {
+      name    = var.pve_node
+      address = var.pve_ssh_address
+
+    }
+  }
+}
 locals {
   # cloud_init_datastore_id = "zssd-files"
   coreos_platform = "proxmoxve"
@@ -45,21 +64,27 @@ locals {
 
   node = var.pve_node
 }
-resource "random_string" "random_vm_id" {
-  # keepers = {
-  #   uuid = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac_address
-  # }
-  length  = 6
-  special = false
-  numeric = true
-  upper   = false
-  lower   = true
+resource "random_pet" "random_hostname" {
+  count = can(var.vm_hostname) && var.vm_hostname == null ? 1 : 0
+  keepers = {
+    uuid = module.vm_uuid.vm_uuid
+  }
 }
 
-resource "random_pet" "random_hostname" {
-  #keepers = {
-  #  uuid = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac_address
-  #}
+# workaround for bpg/proxmox not outputting the uuid
+module "vm_uuid" {
+  source = "github.com/perchnet/terraform-module-proxmox-vm-uuid?ref=3eee1940dc1755c0e57ee5d79fa927afd5c36eab"
+
+  proxmox_host = var.proxmox_host
+  node_name    = var.node_name
+  vm_id        = proxmox_virtual_environment_vm.coreos_vm.vm_id
+
+  pve_api_token        = var.pve_api_token
+  pve_api_token_id     = var.pve_api_token_id
+  pve_api_token_secret = var.pve_api_token_secret
+  pve_username         = var.pve_username
+  pve_password         = var.pve_password
+  verify_ssl           = var.verify_ssl
 }
 
 data "http" "coreos_stream_metadata" {
@@ -87,6 +112,7 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
 
   started = true
 
+  vm_id   = var.vm_id
   machine = "q35"
 
   # Since we're installing the guest agent in our Butane config,
