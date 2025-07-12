@@ -6,7 +6,7 @@ module "coreos-module-vm" {
   vm_authorized_keys    = [data.onepassword_item.proxmox_ssh.note_value]
   pve_disk_datastore_id = "zssd"
   pve_iso_datastore_id  = "zssd-files"
-  vm_agent_enabled      = false
+  vm_agent_enabled      = true
   node_name             = local.pve_node
   #vm_id                 = 1234567
 }
@@ -19,7 +19,7 @@ module "coreos-module-vm2" {
   vm_authorized_keys    = [data.onepassword_item.proxmox_ssh.note_value]
   pve_disk_datastore_id = "zssd"
   pve_iso_datastore_id  = "zssd-files"
-  vm_agent_enabled      = false
+  vm_agent_enabled      = true
   extra_butane_snippets = [
     templatefile("./modules/coreos-vm/ct/autorebase.yaml.tftpl", {
       target_image = "ghcr.io/ublue-os/ucore-hci:stable"
