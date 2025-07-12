@@ -34,7 +34,7 @@ resource "proxmox_virtual_environment_file" "cloud_user_config" {
   datastore_id = var.vm_snippets_datastore_id
   node_name    = var.pve_node
   source_raw {
-    data      = data.ct_config.fedora-coreos-config.rendered
+    data      = sensitive(data.ct_config.fedora-coreos-config.rendered)
     file_name = "${local.ignition_hash}.butane-ci-user-data.ign"
   }
 }
