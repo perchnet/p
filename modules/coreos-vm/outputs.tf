@@ -1,3 +1,4 @@
+# modules/coreos-vm/outputs.tf
 output "vm_id" {
   description = "proxmox vm id"
   value       = proxmox_virtual_environment_vm.coreos_vm.vm_id
