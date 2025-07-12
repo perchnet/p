@@ -57,7 +57,8 @@ resource "proxmox_virtual_environment_download_file" "coreos_img" {
   checksum           = module.coreos_metadata.download_sum
   checksum_algorithm = "sha256"
 
-  file_name               = module.coreos_metadata.coreos_img_filename
+  # proxmox won't download it unless you say it ends in .img
+  file_name               = "${module.coreos_metadata.coreos_img_filename}.img"
   decompression_algorithm = "zst"
 }
 resource "proxmox_virtual_environment_vm" "coreos_vm" {
