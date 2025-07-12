@@ -8,28 +8,10 @@ variable "password" {
   type        = string
 }
 
-variable "stream" {
-  description = "The CoreOS stream name"
-  type        = string
-  default     = "testing" # proxmoxve isn't in stable yet
-}
-
 variable "pve_node" {
   description = "Proxmox VE node name"
   type        = string
   default     = "pve1"
-}
-
-variable "vm_name" {
-  description = "VM name (if empty it will use a random name)"
-  type        = string
-  default     = null
-}
-
-variable "vm_hostname" {
-  description = "VM hostname (if different from vm_name)"
-  type        = string
-  default     = null
 }
 
 variable "vm_description" {
@@ -109,3 +91,21 @@ variable "vm_tags" {
   type        = list(string)
   default     = []
 }
+
+variable "extra_butane_snippets" {
+  description = "additional butane snippets to  include"
+  type        = list(string)
+  default     = []
+}
+
+variable "vm_id" {
+  description = "Virtual machine ID to retrieve UUID for"
+  type        = number
+  default     = null
+}
+
+variable "node_name" {
+  description = "Proxmox node name where the VM is located"
+  type        = string
+}
+
