@@ -103,6 +103,7 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
   agent {
     enabled = var.vm_agent_enabled
   }
+  stop_on_destroy = true # in case agent doesn't work out
 
   vga {
     type = var.vm_vga_type
@@ -114,6 +115,10 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
 
   memory {
     dedicated = var.vm_memory
+  }
+
+  operating_system {
+    type = "l26"
   }
 
   # Here we're referencing the file we uploaded before. Proxmox will

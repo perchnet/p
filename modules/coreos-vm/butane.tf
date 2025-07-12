@@ -10,9 +10,9 @@ data "ct_config" "fedora-coreos-config" {
   content = templatefile("${path.module}/ct/fcos.yaml.tftpl", {
     message       = "Hello World!",
     hostname      = local.vm_hostname,
-    sshkeys       = var.vm_authorized_keys,
+    sshkeys       = sensitive(var.vm_authorized_keys),
     username      = local.coreos_username,
-    password_hash = htpasswd_password.password_hash.bcrypt,
+    password_hash = sensitive(htpasswd_password.password_hash.bcrypt),
   })
   strict       = true
   pretty_print = true
@@ -34,7 +34,7 @@ resource "proxmox_virtual_environment_file" "cloud_user_config" {
   datastore_id = var.vm_snippets_datastore_id
   node_name    = var.pve_node
   source_raw {
-    data      = data.ct_config.fedora-coreos-config.rendered
+    data      = sensitive(data.ct_config.fedora-coreos-config.rendered)
     file_name = "${local.ignition_hash}.butane-ci-user-data.ign"
   }
 }

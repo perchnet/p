@@ -115,7 +115,7 @@ jobs:
         with:
           working-directory: .
           command: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'apply' || 'plan' }}
-          arg-lock: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
+          arg-lock: false # ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
           format: true
           arg-refresh: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'false' || 'true' }} # Skip refresh on apply.
           expand-diff: true
