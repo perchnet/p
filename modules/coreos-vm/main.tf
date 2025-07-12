@@ -27,7 +27,7 @@ terraform {
 }
 
 module "coreos_metadata" {
-  source = "github.com/perchnet/terraform-module-coreos-metadata?ref=e77d650"
+  source = "github.com/perchnet/terraform-module-coreos-metadata?ref=c700d78"
 
   platform = "proxmoxve"
   stream   = "testing"
