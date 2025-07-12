@@ -8,28 +8,10 @@ variable "password" {
   type        = string
 }
 
-variable "stream" {
-  description = "The CoreOS stream name"
-  type        = string
-  default     = "testing" # proxmoxve isn't in stable yet
-}
-
 variable "pve_node" {
   description = "Proxmox VE node name"
   type        = string
   default     = "pve1"
-}
-
-variable "vm_name" {
-  description = "VM name (if empty it will use a random name)"
-  type        = string
-  default     = null
-}
-
-variable "vm_hostname" {
-  description = "VM hostname (if different from vm_name)"
-  type        = string
-  default     = null
 }
 
 variable "vm_description" {
@@ -115,16 +97,6 @@ variable "extra_butane_snippets" {
   type        = list(string)
   default     = []
 }
-variable "proxmox_host" {
-  description = "Proxmox server hostname or IP address"
-  type        = string
-}
-
-variable "proxmox_port" {
-  description = "Proxmox server port"
-  type        = number
-  default     = 8006
-}
 
 variable "vm_id" {
   description = "Virtual machine ID to retrieve UUID for"
@@ -137,71 +109,3 @@ variable "node_name" {
   type        = string
 }
 
-variable "pve_api_token" {
-  description = "Proxmox API token (format: PVEAPIToken=user@realm!tokenid=secret)"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_api_token_id" {
-  description = "Proxmox API token ID (format: user@realm!tokenid)"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_api_token_secret" {
-  description = "Proxmox API token secret"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_username" {
-  description = "Proxmox username (format: user@realm)"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_password" {
-  description = "Proxmox password"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_ssh_username" {
-  description = "Proxmox ssh username (must be PAM)"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_ssh_password" {
-  description = "Proxmox ssh password"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_ssh_address" {
-  description = "Proxmox node ssh address"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "pve_private_key" {
-  description = "Proxmox ssh key"
-  type        = string
-  default     = null
-  sensitive   = true
-}
-
-variable "insecure" {
-  description = "Whether to verify SSL certificates"
-  type        = bool
-  default     = false
-}

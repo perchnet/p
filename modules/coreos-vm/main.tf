@@ -26,85 +26,43 @@ terraform {
   }
 }
 
-provider "proxmox" {
-  endpoint = "https://${var.proxmox_host}:${var.proxmox_port}"
-  insecure = var.insecure
+module "coreos_metadata" {
+  source = "github.com/perchnet/terraform-module-coreos-metadata?ref=e77d650"
 
-  username = var.pve_username
-  password = var.password
+  platform = "proxmoxve"
+  stream   = "testing"
+}
 
-  ssh {
-    username = var.pve_ssh_username
-    password = var.pve_ssh_password
+locals {
 
-    private_key = var.pve_private_key
-    node {
-      name    = var.pve_node
-      address = var.pve_ssh_address
-
-    }
-  }
 }
 locals {
-  # cloud_init_datastore_id = "zssd-files"
-  coreos_platform = "proxmoxve"
-  metadata        = jsondecode(data.http.coreos_stream_metadata.response_body)
-
-  coreos_proxmoxve_stable = local.metadata.architectures.x86_64.artifacts.proxmoxve.formats["qcow2.xz"].disk
-  download_url            = local.coreos_proxmoxve_stable.location
-  download_sum            = local.coreos_proxmoxve_stable.sha256
-  coreos_username         = var.username
-  coreos_password         = var.password
-
-  coreos_img_filename = "coreos_${var.stream}_${local.coreos_platform}_${substr(local.download_sum, 0, 8)}.qcow2.xz.img"
-
-  vm_name     = coalesce(var.vm_name, random_pet.random_hostname.id)
-  vm_hostname = coalesce(var.vm_hostname, local.vm_name)
+  coreos_username = var.username
+  coreos_password = var.password
 
 
-  node = var.pve_node
+  vm_name     = random_pet.random_hostname.id
+  vm_hostname = local.vm_name
+
+
 }
 resource "random_pet" "random_hostname" {
-  count = can(var.vm_hostname) && var.vm_hostname == null ? 1 : 0
-  keepers = {
-    uuid = module.vm_uuid.vm_uuid
-  }
-}
-
-# workaround for bpg/proxmox not outputting the uuid
-module "vm_uuid" {
-  source = "github.com/perchnet/terraform-module-proxmox-vm-uuid?ref=3d7435e"
-
-  proxmox_host = var.proxmox_host
-  node_name    = var.node_name
-  vm_id        = proxmox_virtual_environment_vm.coreos_vm.vm_id
-
-  pve_api_token        = var.pve_api_token
-  pve_api_token_id     = var.pve_api_token_id
-  pve_api_token_secret = var.pve_api_token_secret
-  pve_username         = var.pve_username
-  pve_password         = var.pve_password
-  insecure             = var.insecure
-}
-
-data "http" "coreos_stream_metadata" {
-  url = "https://builds.coreos.fedoraproject.org/streams/${var.stream}.json"
 }
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   content_type = "iso"
   datastore_id = var.pve_iso_datastore_id
-  node_name    = local.node
+  node_name    = var.pve_node
 
-  url                = local.download_url
-  checksum           = local.download_sum
+  url                = module.coreos_metadata.download_url
+  checksum           = module.coreos_metadata.download_sum
   checksum_algorithm = "sha256"
 
-  file_name               = local.coreos_img_filename
+  file_name               = module.coreos_metadata.coreos_img_filename
   decompression_algorithm = "zst"
 }
 resource "proxmox_virtual_environment_vm" "coreos_vm" {
   # This must be the name of your Proxmox node within Proxmox
-  node_name   = local.node
+  node_name   = var.node_name
   name        = local.vm_name
   description = var.vm_description
 
@@ -151,46 +109,5 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
     interface         = "ide2"
     datastore_id      = var.vm_cloud_init_datastore_id
     user_data_file_id = proxmox_virtual_environment_file.cloud_user_config.id
-  }
-}
-
-locals {
-  butanes = coalescelist(var.extra_butane_snippets, [
-    templatefile("${path.module}/ct/autorebase.yaml.tftpl", {
-      target_image = "ghcr.io/ublue-os/ucore-hci:stable"
-    }),
-  ])
-}
-# Butane Config for Fedora CoreOS
-data "ct_config" "fedora-coreos-config" {
-  content = templatefile("${path.module}/ct/fcos.yaml.tftpl", {
-    message       = "Hello World!",
-    hostname      = local.vm_hostname,
-    sshkeys       = var.vm_authorized_keys,
-    username      = local.coreos_username,
-    password_hash = htpasswd_password.password_hash.bcrypt,
-  })
-  strict       = true
-  pretty_print = true
-
-  snippets = local.butanes
-}
-resource "htpasswd_password" "password_hash" {
-  password = local.coreos_password
-}
-
-# Render as Ignition
-
-locals {
-  ignition_hash = substr(sha256(data.ct_config.fedora-coreos-config.rendered), 0, 8)
-}
-
-resource "proxmox_virtual_environment_file" "cloud_user_config" {
-  content_type = "snippets"
-  datastore_id = var.vm_snippets_datastore_id
-  node_name    = var.pve_node
-  source_raw {
-    data      = data.ct_config.fedora-coreos-config.rendered
-    file_name = "${local.vm_name}.${local.ignition_hash}.butane-ci-user-data.ign"
   }
 }
