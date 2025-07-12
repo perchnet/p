@@ -99,7 +99,7 @@ variable "extra_butane_snippets" {
 }
 
 variable "vm_id" {
-  description = "Virtual machine ID to retrieve UUID for"
+  description = "Virtual machine ID"
   type        = number
   default     = null
 }
@@ -108,4 +108,3 @@ variable "node_name" {
   description = "Proxmox node name where the VM is located"
   type        = string
 }
-

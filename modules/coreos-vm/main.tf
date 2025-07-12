@@ -34,9 +34,6 @@ module "coreos_metadata" {
 }
 
 locals {
-
-}
-locals {
   coreos_username = var.username
   coreos_password = var.password
 
@@ -46,8 +43,7 @@ locals {
 
 
 }
-resource "random_pet" "random_hostname" {
-}
+resource "random_pet" "random_hostname" {}
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   content_type = "iso"
   datastore_id = var.pve_iso_datastore_id
