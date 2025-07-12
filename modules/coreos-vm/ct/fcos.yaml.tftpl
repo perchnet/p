@@ -6,6 +6,7 @@ storage:
 #    - path: /
 #      device: /dev/disk/by-label/ROOT
 #      format: ext4
+
   files:
     - path: /etc/motd
       mode: 0644
@@ -22,8 +23,8 @@ storage:
 passwd:
   users:
     - name: ${username}
-      password_hash:  "${password_hash}"
+      password_hash:  "${sensitive(password_hash)}"
       ssh_authorized_keys:
         %{ for sshkey in sshkeys ~}
-        - ssh-key ${trimspace(sshkey)}
+        - ssh-key ${sensitive(trimspace(sshkey))}
         %{ endfor ~}

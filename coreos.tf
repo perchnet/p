@@ -9,6 +9,12 @@ module "coreos-module-vm" {
   vm_agent_enabled      = true
   node_name             = local.pve_node
   #vm_id                 = 1234567
+  extra_butane_snippets = [
+    templatefile("./modules/coreos-vm/ct/autorebase.yaml.tftpl", {
+      target_image = "ghcr.io/perchnet/qcore:latest"
+    }),
+    file("./modules/coreos-vm/ct/setup-periphery.yaml")
+  ]
 }
 module "coreos-module-vm2" {
   #vm_id                 = 2345678
