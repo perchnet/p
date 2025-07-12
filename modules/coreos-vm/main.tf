@@ -28,7 +28,7 @@ terraform {
 
 provider "proxmox" {
   endpoint = "https://${var.proxmox_host}:${var.proxmox_port}"
-  insecure = var.verify_ssl
+  insecure = var.insecure
 
   username = var.pve_username
   password = var.password
@@ -73,7 +73,7 @@ resource "random_pet" "random_hostname" {
 
 # workaround for bpg/proxmox not outputting the uuid
 module "vm_uuid" {
-  source = "github.com/perchnet/terraform-module-proxmox-vm-uuid?ref=3eee1940dc1755c0e57ee5d79fa927afd5c36eab"
+  source = "github.com/perchnet/terraform-module-proxmox-vm-uuid?ref=3d7435e"
 
   proxmox_host = var.proxmox_host
   node_name    = var.node_name
@@ -84,7 +84,7 @@ module "vm_uuid" {
   pve_api_token_secret = var.pve_api_token_secret
   pve_username         = var.pve_username
   pve_password         = var.pve_password
-  verify_ssl           = var.verify_ssl
+  insecure             = var.insecure
 }
 
 data "http" "coreos_stream_metadata" {

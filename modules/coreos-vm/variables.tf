@@ -200,8 +200,8 @@ variable "pve_private_key" {
   sensitive   = true
 }
 
-variable "verify_ssl" {
+variable "insecure" {
   description = "Whether to verify SSL certificates"
   type        = bool
-  default     = true
+  default     = false
 }
