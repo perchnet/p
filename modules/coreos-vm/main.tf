@@ -30,7 +30,7 @@ module "coreos_metadata" {
   source = "github.com/perchnet/terraform-module-coreos-metadata?ref=c700d78"
 
   platform = "proxmoxve"
-  stream   = "testing"
+  stream   = var.coreos_stream
 }
 
 locals {
@@ -43,7 +43,36 @@ locals {
 
 
 }
-resource "random_pet" "random_hostname" {}
+locals {
+  flat_hash = sha256(join(",", flatten([
+    var.username,
+    var.password,
+    var.pve_node,
+    var.vm_description,
+    var.vm_vga_type,
+    var.vm_authorized_keys,
+    var.vm_cloud_init_datastore_id,
+    var.vm_snippets_datastore_id,
+    var.pve_iso_datastore_id,
+    var.pve_disk_datastore_id,
+    var.vm_disk_size,
+    var.vm_agent_enabled,
+    var.vm_memory,
+    var.vm_network_bridge,
+    var.vm_managed_tag,
+    var.vm_tags,
+    var.extra_butane_snippets,
+    var.vm_id,
+    var.node_name,
+    var.coreos_stream,
+  ])))
+
+}
+resource "random_pet" "random_hostname" {
+  keepers = {
+    flat_hash = local.flat_hash
+  }
+}
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   content_type = "iso"
   datastore_id = var.pve_iso_datastore_id

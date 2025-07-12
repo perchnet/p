@@ -108,3 +108,9 @@ variable "node_name" {
   description = "Proxmox node name where the VM is located"
   type        = string
 }
+
+variable "coreos_stream" {
+  description = "CoreOS stream"
+  type        = string
+  default     = "testing"
+}
