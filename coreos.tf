@@ -53,7 +53,7 @@ module "my_tailscale_vm" {
 
   # Tailscale configuration
   tailscale_hostname              = "my-coreos-vm"
-  tailscale_tags                  = ["tag:server", "tag:homelab"]
+  tailscale_tags                  = ["tag:periphery"]
   tailscale_auth_key_expiry_hours = 2 # Key expires in 2 hours
 
   # VM configuration
