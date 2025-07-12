@@ -7,6 +7,8 @@ module "coreos-module-vm" {
   pve_disk_datastore_id = "zssd"
   pve_iso_datastore_id  = "zssd-files"
   vm_agent_enabled      = false
+  node_name             = local.pve_node
+  proxmox_host          = local.pve_host
 }
 module "coreos-module-vm2" {
   source                = "./modules/coreos-vm"
@@ -23,6 +25,8 @@ module "coreos-module-vm2" {
     }),
     file("./modules/coreos-vm/ct/setup-periphery.yaml")
   ]
+  node_name    = local.pve_node
+  proxmox_host = local.pve_host
 }
 resource "onepassword_item" "coreos_module_password" {
   vault    = local.perchnet_vault
