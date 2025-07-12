@@ -99,7 +99,7 @@ variable "extra_butane_snippets" {
 }
 
 variable "vm_id" {
-  description = "Virtual machine ID to retrieve UUID for"
+  description = "Virtual machine ID"
   type        = number
   default     = null
 }
@@ -109,3 +109,8 @@ variable "node_name" {
   type        = string
 }
 
+variable "coreos_stream" {
+  description = "CoreOS stream"
+  type        = string
+  default     = "testing"
+}

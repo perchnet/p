@@ -30,12 +30,9 @@ module "coreos_metadata" {
   source = "github.com/perchnet/terraform-module-coreos-metadata?ref=c700d78"
 
   platform = "proxmoxve"
-  stream   = "testing"
+  stream   = var.coreos_stream
 }
 
-locals {
-
-}
 locals {
   coreos_username = var.username
   coreos_password = var.password
@@ -46,7 +43,34 @@ locals {
 
 
 }
+locals {
+  flat_hash = sha256(jsonencode({
+    username                   = var.username
+    password                   = var.password
+    pve_node                   = var.pve_node
+    vm_description             = var.vm_description
+    vm_vga_type                = var.vm_vga_type
+    vm_authorized_keys         = var.vm_authorized_keys
+    vm_cloud_init_datastore_id = var.vm_cloud_init_datastore_id
+    vm_snippets_datastore_id   = var.vm_snippets_datastore_id
+    pve_iso_datastore_id       = var.pve_iso_datastore_id
+    pve_disk_datastore_id      = var.pve_disk_datastore_id
+    vm_disk_size               = var.vm_disk_size
+    vm_agent_enabled           = var.vm_agent_enabled
+    vm_memory                  = var.vm_memory
+    vm_network_bridge          = var.vm_network_bridge
+    vm_managed_tag             = var.vm_managed_tag
+    vm_tags                    = var.vm_tags
+    extra_butane_snippets      = var.extra_butane_snippets
+    vm_id                      = var.vm_id
+    node_name                  = var.node_name
+    coreos_stream              = var.coreos_stream
+  }))
+}
 resource "random_pet" "random_hostname" {
+  keepers = {
+    flat_hash = local.flat_hash
+  }
 }
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   content_type = "iso"
