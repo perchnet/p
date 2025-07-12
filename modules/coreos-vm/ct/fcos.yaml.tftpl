@@ -27,8 +27,3 @@ passwd:
         %{ for sshkey in sshkeys ~}
         - ssh-key ${trimspace(sshkey)}
         %{ endfor ~}
-
-systemd:
-  units:
-    - name: qemu-guest-agent.service
-      enabled: true

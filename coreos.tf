@@ -22,7 +22,7 @@ module "coreos-module-vm2" {
   vm_agent_enabled      = true
   extra_butane_snippets = [
     templatefile("./modules/coreos-vm/ct/autorebase.yaml.tftpl", {
-      target_image = "ghcr.io/ublue-os/ucore-hci:stable"
+      target_image = "ghcr.io/perchnet/qcore:latest"
     }),
     file("./modules/coreos-vm/ct/setup-periphery.yaml")
   ]
