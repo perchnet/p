@@ -19,27 +19,30 @@ module "tailscale_auth_key" {
 # Create Butane snippet for Tailscale systemd unit
 locals {
   tailscale_butane_snippet = <<-EOF
-systemd:
-  units:
-    - name: tailscale-up.service
-      enabled: true
-      contents: |
-        [Unit]
-        Description=Connect to Tailscale
-        After=network-online.target tailscaled.service
-        Wants=network-online.target
-        Requires=tailscaled.service
+    variant: fcos
+    version: 1.5.0
+    systemd:
+      units:
+        - name: tailscale-up.service
+          enabled: true
+          contents: |
+            [Unit]
+            Description=Connect to Tailscale
+            After=network-online.target tailscaled.service
+            Wants=network-online.target
+            Requires=tailscaled.service
+            ConditionPathExists=/etc/ucore-autorebase/signed
 
-        [Service]
-        Type=oneshot
-        RemainAfterExit=yes
-        ExecStart=/usr/bin/tailscale up --authkey=${module.tailscale_auth_key.key} --hostname=${var.tailscale_hostname}
-        ExecStartPost=/bin/sh -c 'echo "Tailscale connected successfully" | systemd-cat -t tailscale-up'
-        StandardOutput=journal
-        StandardError=journal
+            [Service]
+            Type=oneshot
+            RemainAfterExit=yes
+            ExecStart=/usr/bin/tailscale up --authkey=${module.tailscale_auth_key.key} --hostname=${var.tailscale_hostname}
+            ExecStartPost=/bin/sh -c 'echo "Tailscale connected successfully" | systemd-cat -t tailscale-up'
+            StandardOutput=journal
+            StandardError=journal
 
-        [Install]
-        WantedBy=multi-user.target
+            [Install]
+            WantedBy=multi-user.target
 EOF
 
   # Combine the Tailscale snippet with any additional snippets
