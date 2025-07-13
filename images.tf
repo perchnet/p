@@ -22,7 +22,7 @@ module "proxmox_images" {
     debian_bookworm = {
       file_name          = "debian-12-nocloud-amd64.qcow2.img"
       url                = "https://cloud.debian.org/images/cloud/bookworm/20250428-2096/debian-12-nocloud-amd64-20250428-2096.qcow2"
-      checksum           = "dab5547daa93c45213970cd137826f671ae4b2f8b8f016398538e78a97080d5dffb79c9e9e314031361257f145ba9a3ef057a63e5212135c699495085951eb25"
+      checksum           = "38557e6d8e8738392dc5959b679c4567dbe4ce6475aaa3ba054caab4f1e4f90876c49f6e20be79a5a151105e121f2e19a51319bdb0a223c90fea11b0a13deb25"
       checksum_algorithm = "sha512" # Override default
     }
     ubuntu_jammy = {
