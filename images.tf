@@ -82,21 +82,6 @@ module "ubuntu_noble_cloud_image" {
   }
 }
 
-module "ubuntu_jammy_cloud_image" {
-  source = "./modules/proxmox-image"
-
-  datastore_id        = local.datastore_id
-  node_name           = local.node_name
-  overwrite           = true
-  overwrite_unmanaged = true
-
-  images = {
-    ubuntu_jammy_cloud_image = {
-      url = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
-    }
-  }
-}
-
 module "coreos_image" {
   source = "./modules/proxmox-image"
 
