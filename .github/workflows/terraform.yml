@@ -121,3 +121,4 @@ jobs:
           expand-diff: true
           plan-parity: true
           plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}
+          comment-method: recreate
