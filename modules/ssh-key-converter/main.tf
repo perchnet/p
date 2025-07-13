@@ -15,7 +15,7 @@ variable "pkcs8_key_content" {
 }
 
 data "external" "pkcs8_to_pem" {
-  program = ["bash", "${path.module}/convert_key.sh"]
+  program = ["${path.module}/convert_key.sh"]
 
   query = {
     pkcs8_key = var.pkcs8_key_content
