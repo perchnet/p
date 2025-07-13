@@ -1,6 +1,6 @@
 #!/bin/bash
 #shellcheck disable=all
-set -euxo pipefail
+set -euo pipefail
 
 
 conv_key_2() {
@@ -10,7 +10,7 @@ set -euf
 
 ssl_priv=$(cat ${1:+"$1"})
 
-pub64=$(echo "$ssl_priv" | openssl pkey -pubout -outform der | dd bs=12 skip=1 | base64)
+pub64=$(echo "$ssl_priv" | openssl pkey -pubout -outform der | dd bs=12 skip=1 iflag=fullblock,skip_bytes | base64)
 
 test "$pub64" || { echo "Cannot get public key" >&2; exit 1; }
 
