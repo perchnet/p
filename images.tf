@@ -14,9 +14,10 @@ module "coreos_metadata" {
 module "proxmox_images" {
   source = "./modules/proxmox-image"
 
-  datastore_id = local.datastore_id
-  node_name    = local.node_name
-  overwrite    = true
+  datastore_id        = local.datastore_id
+  node_name           = local.node_name
+  overwrite           = true
+  overwrite_unmanaged = true
 
   images = {
     debian_bookworm = {
