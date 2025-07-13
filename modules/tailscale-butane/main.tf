@@ -9,9 +9,12 @@ locals {
   execstartpost_lines = try(join("\n", [
     for cmd in var.late_commands : "ExecStartPost=${cmd}"
   ]), "")
-  advertise_tags_args = try(join(" ", [
-    for tag in var.tailscale_tags : "--advertise-tag=${tag}"
-  ]), "")
+  
+  advertise_tags_args = (
+    var.tailscale_tags != null && length(compact(var.tags)) > 0
+    ? "--advertise-tags=${join(",", compact(var.tailscale_tags))}"
+    : ""
+  )
   tailscale_butane_snippet = <<-EOF
     variant: fcos
     version: 1.5.0

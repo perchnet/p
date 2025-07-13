@@ -15,7 +15,6 @@ module "coreos-periphery-vm" {
     templatefile("./modules/coreos-vm/ct/autorebase.yaml.tftpl", {
       target_image = "ghcr.io/perchnet/qcore:latest"
     }),
-    file("./modules/coreos-vm/ct/setup-periphery.yaml"),
     module.tailscale_butane.butane_snippet,
   ]
 }
