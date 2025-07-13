@@ -2,8 +2,7 @@ variable "images" {
   description = "Map of image configurations to download"
   type = map(object({
     # Required fields
-    url       = string
-    file_name = optional(string)
+    url = string
 
     # Optional fields with defaults
     content_type            = optional(string, "iso")
@@ -17,15 +16,16 @@ variable "images" {
     upload_timeout          = optional(number, 600)
 
     # Advanced optional fields
-    verify = optional(bool, true)
+    file_name = optional(string)
+    verify    = optional(bool, true)
   }))
 
   validation {
     condition = alltrue([
       for name, image in var.images :
-      image.url != null && image.file_name != null
+      image.url != null
     ])
-    error_message = "Each image must have 'url' and 'file_name' specified."
+    error_message = "Each image must have 'url' specified."
   }
 
   validation {
