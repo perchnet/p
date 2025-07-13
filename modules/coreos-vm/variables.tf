@@ -115,3 +115,11 @@ variable "coreos_stream" {
   type        = string
   default     = "testing"
 }
+
+variable "coreos_img" {
+  description = "Optional existing CoreOS image resource. If provided, the module will use this instead of downloading a new image."
+  type = object({
+    id = string
+  })
+  default = null
+}

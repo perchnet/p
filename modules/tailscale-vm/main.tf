@@ -31,7 +31,6 @@ locals {
             After=network-online.target tailscaled.service
             Wants=network-online.target
             Requires=tailscaled.service
-            ConditionPathExists=/etc/ucore-autorebase/signed
 
             [Service]
             Type=oneshot
@@ -73,6 +72,7 @@ module "coreos_vm" {
   vm_id                      = var.vm_id
   node_name                  = var.node_name
   coreos_stream              = var.coreos_stream
+  coreos_img                 = var.coreos_img
 
   # Include Tailscale butane snippet
   extra_butane_snippets = local.all_butane_snippets

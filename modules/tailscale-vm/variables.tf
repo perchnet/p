@@ -36,6 +36,14 @@ variable "tailscale_auth_key_expiry_hours" {
 }
 
 # VM-specific variables (pass-through from coreos-vm module)
+
+variable "coreos_img" {
+  description = "Optional existing CoreOS image resource. If provided, the module will use this instead of downloading a new image."
+  type = object({
+    id = string
+  })
+  default = null
+}
 variable "username" {
   description = "Initial username for the VM"
   type        = string

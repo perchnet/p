@@ -45,6 +45,7 @@ locals {
 }
 resource "random_pet" "random_hostname" {}
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
+  count        = var.coreos_img == null ? 1 : 0
   content_type = "iso"
   datastore_id = var.pve_iso_datastore_id
   node_name    = var.pve_node
@@ -98,8 +99,9 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
   disk {
     interface    = "scsi0"
     datastore_id = var.pve_disk_datastore_id
-    file_id      = proxmox_virtual_environment_download_file.coreos_img.id
-    size         = var.vm_disk_size
+    file_id      = var.coreos_img != null ? var.coreos_img.id : proxmox_virtual_environment_download_file.coreos_img[0].id
+
+    size = var.vm_disk_size
   }
 
   # We need a network connection so that we can install the guest agent
