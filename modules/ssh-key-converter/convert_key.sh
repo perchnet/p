@@ -1,50 +1,55 @@
 #!/bin/bash
 #shellcheck disable=all
-set -euo pipefail
-
+set -euvo pipefail
 
 conv_key_2() {
-#!/bin/sh
-
-set -euf
-
-ssl_priv=$(cat ${1:+"$1"})
-
-pub64=$(echo "$ssl_priv" | openssl pkey -pubout -outform der | tail -c+13 | base64)
-
-test "$pub64" || { echo "Cannot get public key" >&2; exit 1; }
-
-priv64=$(echo "$ssl_priv" | grep -v '^-' | base64 -d | dd bs=16 skip=1 status=none | base64)
-
-echo '-----BEGIN OPENSSH PRIVATE KEY-----'
-
-{
-    printf openssh-key-v1'\000\000\000\000\004'none'\000\000\000\004'none'\000\000\000\000\000\000\000\001\000\000\000'3
-    printf '\000\000\000\013'ssh-ed25519'\000\000\000 '
-    echo $pub64 | base64 -d
-    printf '\000\000\000'
-    printf '\210\000\000\000\000\000\000\000\000'
-    printf '\000\000\000\013'ssh-ed25519'\000\000\000 '
-    echo $pub64 | base64 -d
-    printf '\000\000\000@'
-    echo $priv64| base64 -d
-    echo $pub64 | base64 -d
-    printf '\000\000\000\000\001\002\003\004\005'
-} | base64
-
-echo '-----END OPENSSH PRIVATE KEY-----'
-
+    local ssl_priv="$1"
+    local pub64 priv64
     
+    # Extract public key in base64 format
+    pub64=$(printf '%s\n' "$ssl_priv" | openssl pkey -pubout -outform der | tail -c+13 | base64 -w0)
+    
+    if [[ -z "$pub64" ]]; then
+        echo "Cannot get public key" >&2
+        exit 1
+    fi
+    
+    # Extract private key part - remove PEM headers, decode, and skip first 16 bytes
+    local base64_data
+    base64_data=$(printf '%s\n' "$ssl_priv" | sed '/^-/d' | tr -d '\n')
+    
+    # Decode base64 to hex, skip first 32 hex chars (16 bytes), then back to base64
+    local hex_data
+    hex_data=$(base64 -d <<< "$base64_data" | xxd -p -c0)
+    priv64=$(printf '%s' "${hex_data:32}" | xxd -r -p | base64 -w0)
+    
+    printf '%s\n' '-----BEGIN OPENSSH PRIVATE KEY-----'
+    
+    # Build OpenSSH private key structure in one go
+    {
+        printf 'openssh-key-v1\000\000\000\000\004none\000\000\000\004none\000\000\000\000\000\000\000\001\000\000\000\063'
+        printf '\000\000\000\013ssh-ed25519\000\000\000\040'
+        base64 -d <<< "$pub64"
+        printf '\000\000\000\210\000\000\000\000\000\000\000\000'
+        printf '\000\000\000\013ssh-ed25519\000\000\000\040'
+        base64 -d <<< "$pub64"
+        printf '\000\000\000\100'
+        base64 -d <<< "$priv64"
+        base64 -d <<< "$pub64"
+        printf '\000\000\000\000\001\002\003\004\005'
+    } | base64 -w0
+    
+    printf '\n%s\n' '-----END OPENSSH PRIVATE KEY-----'
 }
 
-# Extract the PKCS8 key directly from stdin
-pkcs8_key="$(jq -r '.pkcs8_key')"
+# Read and parse input JSON
+read -r input_json
+pkcs8_key=$(jq -r '.pkcs8_key' <<< "$input_json")
 
-# Convert PKCS8 to PEM format using ssh-keygen with pipes
-#if pem_key="$(echo "${pkcs8_key}" | ssh-keygen -i -f /dev/stdin -m pkcs8 )"; then
-if pem_key="$(echo "${pkcs8_key}" | conv_key_2 )"; then
-    # Output as JSON (required by external data source)
-    jq -n --arg pem_key "${pem_key}" '{"pem_key": $pem_key}'
+# Convert PKCS8 to OpenSSH format
+if pem_key=$(conv_key_2 "$pkcs8_key"); then
+    # Output result as JSON
+    jq -n --arg pem_key "$pem_key" '{"pem_key": $pem_key}'
 else
     echo "Error: Failed to convert PKCS8 key to PEM format" >&2
     exit 1
