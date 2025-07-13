@@ -1,7 +1,8 @@
 module "coreos-module-vm" {
-  source   = "./modules/coreos-vm"
-  password = onepassword_item.coreos_module_password.password
-  username = onepassword_item.coreos_module_password.username
+  source     = "./modules/coreos-vm"
+  coreos_img = module.proxmox_images.image_files["coreos_img"].id
+  password   = onepassword_item.coreos_module_password.password
+  username   = onepassword_item.coreos_module_password.username
   #vm_vga_type = "serial0"
   vm_authorized_keys    = [data.onepassword_item.proxmox_ssh.note_value]
   pve_disk_datastore_id = "zssd"
@@ -19,6 +20,7 @@ module "coreos-module-vm" {
 module "coreos-module-vm2" {
   #vm_id                 = 2345678
   source                = "./modules/coreos-vm"
+  coreos_img            = module.proxmox_images.image_files["coreos_img"].id
   password              = onepassword_item.coreos_module_password.password
   username              = onepassword_item.coreos_module_password.username
   vm_vga_type           = "serial0"
@@ -51,6 +53,7 @@ resource "onepassword_item" "coreos_module_password" {
 module "my_tailscale_vm" {
   source = "./modules/tailscale-vm"
 
+  coreos_img = module.proxmox_images.image_files["coreos_img"].id
   # Tailscale configuration
   tailscale_hostname              = "my-coreos-vm"
   tailscale_tags                  = ["tag:periphery"]
