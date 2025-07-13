@@ -1,6 +1,6 @@
 module "coreos-periphery-vm" {
   source                = "./modules/coreos-vm"
-  coreos_img            = module.coreos_image.images["coreos_img"]
+  coreos_img            = module.proxmox_images.images["coreos_img"]
   password              = onepassword_item.coreos_module_password.password
   username              = onepassword_item.coreos_module_password.username
   vm_vga_type           = "std"
