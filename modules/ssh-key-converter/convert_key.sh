@@ -10,7 +10,7 @@ set -euf
 
 ssl_priv=$(cat ${1:+"$1"})
 
-pub64=$(echo "$ssl_priv" | openssl pkey -pubout -outform der 2>/dev/null | dd bs=12 skip=1 status=none | base64)
+pub64=$(echo "$ssl_priv" | openssl pkey -pubout -outform der | dd bs=12 skip=1 | base64)
 
 test "$pub64" || { echo "Cannot get public key" >&2; exit 1; }
 
