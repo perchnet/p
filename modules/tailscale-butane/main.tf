@@ -5,13 +5,13 @@ terraform {
 
 # Create Butane snippet for tailscale-up systemd unit
 locals {
-  tailscale_extra_args = var.tailscale_extra_args
+  tailscale_extra_args = try(join(" ", var.tailscale_extra_args), "")
   execstartpost_lines = try(join("\n", [
     for cmd in var.late_commands : "ExecStartPost=${cmd}"
-  ]), null)
+  ]), "")
   advertise_tags_args = try(join(" ", [
     for tag in var.tailscale_tags : "--advertise-tag=${tag}"
-  ]), null)
+  ]), "")
   tailscale_butane_snippet = <<-EOF
     variant: fcos
     version: 1.5.0

@@ -27,7 +27,7 @@ variable "tailscale_tags" {
 variable "tailscale_extra_args" {
   description = "List of extra arguments to pass to tailscale up"
   type        = list(string)
-  default     = []
+  default     = [""]
 }
 
 variable "late_commands" {
