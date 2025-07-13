@@ -19,7 +19,7 @@ locals {
       node_name               = coalesce(config.node_name, var.node_name)
       checksum                = config.checksum
       checksum_algorithm      = coalesce(config.checksum_algorithm, var.checksum_algorithm)
-      decompression_algorithm = coalesce(config.decompress, var.decompression_algorithm)
+      decompression_algorithm = coalesce(config.decompression_algorithm, var.decompression_algorithm)
       overwrite               = coalesce(config.overwrite, var.overwrite)
       overwrite_unmanaged     = coalesce(config.overwrite_unmanaged, var.overwrite_unmanaged)
       upload_timeout          = coalesce(config.upload_timeout, var.upload_timeout)
