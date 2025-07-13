@@ -20,7 +20,6 @@ output "image_files" {
       datastore_id = image.datastore_id
       node_name    = image.node_name
       size         = image.size
-      task_id      = image.task_id
     }
   }
 }
