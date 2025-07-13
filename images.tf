@@ -16,6 +16,7 @@ module "proxmox_images" {
 
   datastore_id = local.datastore_id
   node_name    = local.node_name
+  overwrite    = true
 
   images = {
     debian_bookworm = {
