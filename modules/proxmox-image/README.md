@@ -35,7 +35,7 @@ module "advanced_images" {
   default_overwrite           = true
   default_overwrite_unmanaged = false
   default_upload_timeout      = 3600
-  default_verify_certificate  = true
+  default_verify  = true
 
   images = {
     debian_bookworm = {
@@ -57,7 +57,7 @@ module "advanced_images" {
       file_name         = "CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2"
       node_name         = "pve3"
       upload_timeout    = 7200  # 2 hours for large file
-      verify_certificate = false  # If needed for specific URLs
+      verify = false  # If needed for specific URLs
     }
     
     proxmox_container_template = {

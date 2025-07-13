@@ -23,7 +23,7 @@ locals {
       overwrite               = coalesce(config.overwrite, var.overwrite)
       overwrite_unmanaged     = coalesce(config.overwrite_unmanaged, var.overwrite_unmanaged)
       upload_timeout          = coalesce(config.upload_timeout, var.upload_timeout)
-      verify_certificate      = coalesce(config.verify_certificate, var.verify_certificate)
+      verify                  = coalesce(config.verify, var.verify)
     }
   }
 }

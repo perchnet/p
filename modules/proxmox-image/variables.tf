@@ -131,7 +131,7 @@ variable "upload_timeout" {
   }
 }
 
-variable "verify_certificate" {
+variable "verify" {
   description = "Verify SSL certificates when downloading"
   type        = bool
   default     = true
