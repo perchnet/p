@@ -1,6 +1,6 @@
 module "coreos-module-vm" {
   source     = "./modules/coreos-vm"
-  coreos_img = module.proxmox_images.image_files["coreos_img"].id
+  coreos_img = module.proxmox_images.image_ids["coreos_img"]
   password   = onepassword_item.coreos_module_password.password
   username   = onepassword_item.coreos_module_password.username
   #vm_vga_type = "serial0"
@@ -20,7 +20,7 @@ module "coreos-module-vm" {
 module "coreos-module-vm2" {
   #vm_id                 = 2345678
   source                = "./modules/coreos-vm"
-  coreos_img            = module.proxmox_images.image_files["coreos_img"].id
+  coreos_img            = module.proxmox_images.image_ids["coreos_img"]
   password              = onepassword_item.coreos_module_password.password
   username              = onepassword_item.coreos_module_password.username
   vm_vga_type           = "serial0"
@@ -53,7 +53,7 @@ resource "onepassword_item" "coreos_module_password" {
 module "my_tailscale_vm" {
   source = "./modules/tailscale-vm"
 
-  coreos_img = module.proxmox_images.image_files["coreos_img"].id
+  coreos_img = module.proxmox_images.image_ids["coreos_img"]
   # Tailscale configuration
   tailscale_hostname              = "my-coreos-vm"
   tailscale_tags                  = ["tag:periphery"]
