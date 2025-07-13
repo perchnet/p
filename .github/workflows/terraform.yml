@@ -48,6 +48,8 @@ jobs:
           oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:github-runner
+          use-cache: 'true'
+          args: '--accept-routes'
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
