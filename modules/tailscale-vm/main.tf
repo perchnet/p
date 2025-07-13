@@ -42,7 +42,7 @@ locals {
 
             [Install]
             WantedBy=multi-user.target
-EOF
+  EOF
 
   # Combine the Tailscale snippet with any additional snippets
   all_butane_snippets = concat([local.tailscale_butane_snippet], var.extra_butane_snippets)
@@ -67,6 +67,8 @@ module "coreos_vm" {
   vm_agent_enabled           = var.vm_agent_enabled
   vm_memory                  = var.vm_memory
   vm_network_bridge          = var.vm_network_bridge
+  vm_name                    = var.tailscale_hostname
+  vm_hostname                = var.tailscale_hostname
   vm_managed_tag             = var.vm_managed_tag
   vm_tags                    = concat(var.vm_tags, ["tailscale"])
   vm_id                      = var.vm_id

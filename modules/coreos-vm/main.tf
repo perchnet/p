@@ -38,12 +38,15 @@ locals {
   coreos_password = var.password
 
 
-  vm_name     = random_pet.random_hostname.id
-  vm_hostname = local.vm_name
+  vm_name     = var.vm_name != null ? var.vm_name : random_pet.random_hostname[0].id
+  vm_hostname = var.vm_hostname != null ? var.vm_hostname : local.vm_name
+
 
 
 }
-resource "random_pet" "random_hostname" {}
+resource "random_pet" "random_hostname" {
+  count = var.vm_name == null ? 1 : 0
+}
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   count        = var.coreos_img == null ? 1 : 0
   content_type = "iso"

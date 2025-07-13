@@ -20,6 +20,7 @@ module "coreos-module-vm" {
 module "coreos-module-vm2" {
   #vm_id                 = 2345678
   source                = "./modules/coreos-vm"
+  vm_hostname           = "coreos-vm-2"
   coreos_img            = module.proxmox_images.images["coreos_img"]
   password              = onepassword_item.coreos_module_password.password
   username              = onepassword_item.coreos_module_password.username
@@ -55,9 +56,10 @@ module "my_tailscale_vm" {
 
   coreos_img = module.proxmox_images.images["coreos_img"]
   # Tailscale configuration
-  tailscale_hostname              = "my-coreos-vm"
+  tailscale_hostname              = "tailscale-coreos-vm"
   tailscale_tags                  = ["tag:periphery"]
   tailscale_auth_key_expiry_hours = 2 # Key expires in 2 hours
+  # TODO: add tailscale_extra_args
 
   # VM configuration
   password              = onepassword_item.coreos_module_password.password

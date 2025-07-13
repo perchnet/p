@@ -15,6 +15,16 @@ variable "pve_node" {
   default     = "pve1"
 }
 
+variable "vm_name" {
+  description = "VM name (defaults to random name)"
+  type        = string
+  default     = null
+}
+variable "vm_hostname" {
+  description = "VM hostname (defaults to VM name)"
+  type        = string
+  default     = null
+}
 variable "vm_description" {
   description = "VM description"
   type        = string
