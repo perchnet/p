@@ -52,6 +52,14 @@ data "onepassword_item" "proxmox_ssh" {
   title = "proxmox-ssh"
 }
 
+module "pkcs8_to_pem" {
+  source = "./modules/ssh-key-converter"
+
+  pkcs8_key_content = data.onepassword_item.proxmox_ssh.private_key
+}
+
+
+
 locals {
   # Proxmox connection settings
   pve_host = "pve1.shark-perch.ts.net"
@@ -62,14 +70,16 @@ locals {
   pve_api_username = data.onepassword_item.proxmox_api.username
   pve_api_password = sensitive(data.onepassword_item.proxmox_api.password)
   pve_ssh_username = data.onepassword_item.proxmox_ssh.username
-  pve_ssh_password = sensitive(data.onepassword_item.proxmox_ssh.password)
+  #  pve_ssh_password = sensitive(data.onepassword_item.proxmox_ssh.password)
 
   # Full endpoint
   pve_endpoint = "https://${local.pve_host}:${local.pve_port}"
   pve_insecure = false
 
   # SSH address (same as host for most use cases)
-  pve_ssh_address = local.pve_host
+  #pve_ssh_address = local.pve_host
+  pve_ssh_address = "192.168.1.4"
+  pve_ssh_key     = sensitive(module.pkcs8_to_pem.pem_key_content)
 }
 # Provide SSH access to all nodes as well as an admin API token
 provider "proxmox" {
@@ -81,9 +91,9 @@ provider "proxmox" {
 
   ssh {
     username = local.pve_ssh_username
-    password = local.pve_ssh_password
+    #password = local.pve_ssh_password
 
-    #private_key = data.external.proxmox_ssh_pem.result["pem_key"]
+    private_key = local.pve_ssh_key
     node {
       name    = local.pve_node
       address = local.pve_ssh_address
