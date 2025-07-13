@@ -78,7 +78,8 @@ locals {
 
   # SSH address (same as host for most use cases)
   #pve_ssh_address = local.pve_host
-  pve_ssh_address = "192.168.1.4"
+  #pve_ssh_address = "192.168.1.4"
+  pve_ssh_address = "192-168-1-4-via-1.shark-perch.ts.net"
   pve_ssh_key     = sensitive(module.pkcs8_to_pem.pem_key_content)
 }
 # Provide SSH access to all nodes as well as an admin API token
