@@ -32,8 +32,8 @@ resource "github_repository" "p_repository" {
   allow_squash_merge          = true
   allow_update_branch         = true
   archived                    = false
-  delete_branch_on_merge      = false
-  description                 = null
+  delete_branch_on_merge      = true
+  description                 = "bri's homelab terraform monorepo"
   has_discussions             = false
   has_downloads               = true
   has_issues                  = true
