@@ -1,5 +1,11 @@
-module "coreos-periphery-vm" {
-  source                = "./modules/coreos-vm"
+resource "random_id" "tailscale_host_suffix" {
+  byte_length = 2
+}
+locals {
+  user_hostname         = "tf-coreos-periphery"
+  tailscale_host_suffix = random_id.tailscale_host_suffix.id
+  hostname              = "${local.user_hostname}-${local.tailscale_host_suffix}"
+  tailscale_tags        = ["tag:periphery"]
   coreos_img            = module.proxmox_images.images["coreos_img"]
   password              = onepassword_item.coreos_module_password.password
   username              = onepassword_item.coreos_module_password.username
@@ -8,14 +14,13 @@ module "coreos-periphery-vm" {
   pve_disk_datastore_id = "zssd"
   pve_iso_datastore_id  = "zssd-files"
   vm_agent_enabled      = true
-  node_name             = local.pve_node
-  vm_name               = "coreos-periphery-test"
+  #node_name             = local.pve_node
+  vm_name = local.hostname
   #vm_id                 = 1234567
   extra_butane_snippets = [
     templatefile("./modules/coreos-vm/ct/autorebase.yaml.tftpl", {
       target_image = "ghcr.io/perchnet/qcore:latest"
     }),
-    module.tailscale_butane.butane_snippet,
   ]
 }
 resource "onepassword_item" "coreos_module_password" {
@@ -33,15 +38,14 @@ resource "onepassword_item" "coreos_module_password" {
 module "tailscale_butane" {
   source                   = "./modules/tailscale-butane"
   tailscale_auth_key       = tailscale_tailnet_key.key.key
-  tailscale_tags           = ["tag:periphery"]
+  tailscale_tags           = local.tailscale_tags
   replace_when_key_changes = false
 }
 locals {
   rotation_seconds = 3600
-  rotation_minutes = (local.rotation_seconds / 60)
 }
 resource "time_rotating" "rotate_tailnet_key" {
-  rotation_minutes = local.rotation_minutes
+  rotation_minutes = (local.rotation_seconds / 60)
 }
 resource "tailscale_tailnet_key" "key" {
   reusable      = false # Single-use key
@@ -52,4 +56,29 @@ resource "tailscale_tailnet_key" "key" {
   lifecycle {
     replace_triggered_by = [time_rotating.rotate_tailnet_key]
   }
+}
+
+
+module "coreos-periphery-vm" {
+  source                = "./modules/coreos-vm"
+  coreos_img            = local.coreos_img
+  password              = local.password
+  username              = local.username
+  vm_vga_type           = local.vm_vga_type
+  vm_authorized_keys    = local.vm_authorized_keys
+  pve_disk_datastore_id = local.pve_disk_datastore_id
+  pve_iso_datastore_id  = local.pve_iso_datastore_id
+  vm_agent_enabled      = local.vm_agent_enabled
+  node_name             = local.node_name
+  vm_name               = local.vm_name
+  #vm_id                 = 1234567
+  extra_butane_snippets = concat(local.extra_butane_snippets, [module.tailscale_butane.butane_snippet])
+}
+
+data "tailscale_devices" "devices_list" {
+  name_prefix = local.hostname
+}
+output "tailscale_devices" {
+  value = data.tailscale_devices.devices_list.devices
+
 }
