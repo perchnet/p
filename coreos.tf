@@ -87,14 +87,17 @@ data "http" "tailscale_node_deletion_token" {
   ])
 }
 resource "terraform_data" "tailscale_node_deletion_hook" {
-  count = 0
+  count = 1
   input = sensitive([
     data.tailscale_devices.devices_list.devices[0].node_id,
     jsondecode(data.http.tailscale_node_deletion_token.response_body).access_token,
   ])
+  triggers_replace = module.coreos-periphery-vm.ignition_hash_short
+
   provisioner "local-exec" {
-    when    = destroy
-    command = <<-EOF
+    when       = destroy
+    on_failure = continue
+    command    = <<-EOF
       #!/usr/bin/env bash
 
       response_code=$(curl -s -o /dev/null -w "%%{http_code}" https://api.tailscale.com/api/v2/device/${sensitive(self.output[0])} \
@@ -129,8 +132,5 @@ data "tailscale_devices" "devices_list" {
   name_prefix = lower(local.hostname)
 }
 output "tailscale_devices" {
-  value = data.tailscale_devices.devices_list.devices
-}
-output "this" {
-  value = data.tailscale_devices.devices_list.devices[0].node_id
+  value = try(data.tailscale_devices.devices_list.devices, null)
 }
