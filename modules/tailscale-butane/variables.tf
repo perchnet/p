@@ -1,6 +1,7 @@
 # modules/tailscale-vm/variables.tf
 variable "tailscale_auth_key" {
   description = "value of the tailscale auth key"
+  sensitive   = true
   type        = string
 }
 

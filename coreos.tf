@@ -31,10 +31,10 @@ resource "onepassword_item" "coreos_module_password" {
 }
 
 module "tailscale_butane" {
-  source             = "./modules/tailscale-butane"
-  tailscale_auth_key = tailscale_tailnet_key.key.key
-  tailscale_tags     = ["tag:periphery"]
-
+  source                   = "./modules/tailscale-butane"
+  tailscale_auth_key       = tailscale_tailnet_key.key.key
+  tailscale_tags           = ["tag:periphery"]
+  replace_when_key_changes = false
 }
 locals {
   rotation_seconds = 3600
