@@ -26,12 +26,8 @@ resource "htpasswd_password" "password_hash" {
 # Render as Ignition
 
 locals {
-  ignition_hash       = sha256(terraform_data.fedora_coreos_config.output)
-  ignition_hash_short = substr(sha256(terraform_data.fedora_coreos_config.output), 0, 8)
-}
-
-resource "terraform_data" "fedora_coreos_config" {
-  input = sensitive(data.ct_config.fedora-coreos-config.rendered)
+  ignition_hash       = sha256(data.ct_config.fedora-coreos-config.rendered)
+  ignition_hash_short = substr(local.ignition_hash, 0, 8)
 }
 
 resource "proxmox_virtual_environment_file" "cloud_user_config" {
@@ -39,7 +35,7 @@ resource "proxmox_virtual_environment_file" "cloud_user_config" {
   datastore_id = var.vm_snippets_datastore_id
   node_name    = var.pve_node
   source_raw {
-    data      = sensitive(terraform_data.fedora_coreos_config.output)
+    data      = sensitive(data.ct_config.fedora-coreos-config.rendered)
     file_name = "${local.ignition_hash_short}.butane-ci-user-data.ign"
   }
 }

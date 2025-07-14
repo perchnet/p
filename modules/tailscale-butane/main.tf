@@ -42,11 +42,27 @@ locals {
             WantedBy=multi-user.target
   EOF
 }
-resource "terraform_data" "butane_snippet" {
-  input            = local.tailscale_butane_snippet
-  triggers_replace = var.replace_when_key_changes ? var.tailscale_auth_key : null
+resource "terraform_data" "butane_snippet_replaceable" {
+  count = var.replace_when_key_changes ? 1 : 0
+
+  input = local.tailscale_butane_snippet
+  # No lifecycle block - will replace when input changes
+}
+
+resource "terraform_data" "butane_snippet_stable" {
+  count = var.replace_when_key_changes ? 0 : 1
+
+  input = local.tailscale_butane_snippet
+
+  lifecycle {
+    ignore_changes = [input]
+  }
+}
+locals {
+  butane_result = var.replace_when_key_changes ? terraform_data.butane_snippet_replaceable[0].output : terraform_data.butane_snippet_stable[0].output
+
 }
 output "butane_snippet" {
-  value       = terraform_data.butane_snippet.output
+  value       = local.butane_result
   description = "butane snippet to bring up tailscale"
 }
