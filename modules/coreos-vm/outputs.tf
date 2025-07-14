@@ -1,11 +1,18 @@
+# modules/coreos-vm/outputs.tf
 output "vm_id" {
   description = "proxmox vm id"
   value       = proxmox_virtual_environment_vm.coreos_vm.vm_id
 }
-# output "vm_mac0" {
-#   description = "proxmox vm 0th mac"
-#   value       = proxmox_virtual_environment_vm.coreos_vm.network_device[0].mac_address
-# }
+output "ignition_hash_short" {
+  description = "ignition hash"
+  value       = local.ignition_hash_short
+  sensitive   = false
+}
+output "ignition_hash" {
+  description = "ignition hash"
+  value       = local.ignition_hash
+  sensitive   = false
+}
 output "vm_name" {
   description = "vm name"
   value       = proxmox_virtual_environment_vm.coreos_vm.name

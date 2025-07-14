@@ -48,6 +48,8 @@ jobs:
           oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:github-runner
+          use-cache: 'true'
+          #args: '--accept-routes'
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -115,9 +117,10 @@ jobs:
         with:
           working-directory: .
           command: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'apply' || 'plan' }}
-          arg-lock: false # ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
+          arg-lock: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
           format: true
           arg-refresh: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'false' || 'true' }} # Skip refresh on apply.
           expand-diff: true
           plan-parity: true
           plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}
+          comment-method: recreate

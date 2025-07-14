@@ -38,41 +38,17 @@ locals {
   coreos_password = var.password
 
 
-  vm_name     = random_pet.random_hostname.id
-  vm_hostname = local.vm_name
+  vm_name     = var.vm_name != null ? var.vm_name : random_pet.random_hostname[0].id
+  vm_hostname = var.vm_hostname != null ? var.vm_hostname : local.vm_name
 
 
-}
-locals {
-  flat_hash = sha256(jsonencode({
-    username                   = var.username
-    password                   = var.password
-    pve_node                   = var.pve_node
-    vm_description             = var.vm_description
-    vm_vga_type                = var.vm_vga_type
-    vm_authorized_keys         = var.vm_authorized_keys
-    vm_cloud_init_datastore_id = var.vm_cloud_init_datastore_id
-    vm_snippets_datastore_id   = var.vm_snippets_datastore_id
-    pve_iso_datastore_id       = var.pve_iso_datastore_id
-    pve_disk_datastore_id      = var.pve_disk_datastore_id
-    vm_disk_size               = var.vm_disk_size
-    vm_agent_enabled           = var.vm_agent_enabled
-    vm_memory                  = var.vm_memory
-    vm_network_bridge          = var.vm_network_bridge
-    vm_managed_tag             = var.vm_managed_tag
-    vm_tags                    = var.vm_tags
-    extra_butane_snippets      = var.extra_butane_snippets
-    vm_id                      = var.vm_id
-    node_name                  = var.node_name
-    coreos_stream              = var.coreos_stream
-  }))
+
 }
 resource "random_pet" "random_hostname" {
-  keepers = {
-    flat_hash = local.flat_hash
-  }
+  count = var.vm_name == null ? 1 : 0
 }
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
+  count        = var.coreos_img == null ? 1 : 0
   content_type = "iso"
   datastore_id = var.pve_iso_datastore_id
   node_name    = var.pve_node
@@ -126,8 +102,9 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
   disk {
     interface    = "scsi0"
     datastore_id = var.pve_disk_datastore_id
-    file_id      = proxmox_virtual_environment_download_file.coreos_img.id
-    size         = var.vm_disk_size
+    file_id      = var.coreos_img != null ? var.coreos_img.id : proxmox_virtual_environment_download_file.coreos_img[0].id
+
+    size = var.vm_disk_size
   }
 
   # We need a network connection so that we can install the guest agent

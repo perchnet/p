@@ -1,3 +1,4 @@
+# modules/coreos-vm/variables.tf
 variable "username" {
   description = "initial username"
   type        = string
@@ -14,6 +15,16 @@ variable "pve_node" {
   default     = "pve1"
 }
 
+variable "vm_name" {
+  description = "VM name (defaults to random name)"
+  type        = string
+  default     = null
+}
+variable "vm_hostname" {
+  description = "VM hostname (defaults to VM name)"
+  type        = string
+  default     = null
+}
 variable "vm_description" {
   description = "VM description"
   type        = string
@@ -113,4 +124,12 @@ variable "coreos_stream" {
   description = "CoreOS stream"
   type        = string
   default     = "testing"
+}
+
+variable "coreos_img" {
+  description = "Optional existing CoreOS image resource. If provided, the module will use this instead of downloading a new image."
+  type = object({
+    id = string
+  })
+  default = null
 }
