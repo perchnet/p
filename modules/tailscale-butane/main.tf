@@ -42,7 +42,11 @@ locals {
             WantedBy=multi-user.target
   EOF
 }
+resource "terraform_data" "butane_snippet" {
+  input            = local.tailscale_butane_snippet
+  triggers_replace = var.replace_when_key_changes ? var.tailscale_auth_key : null
+}
 output "butane_snippet" {
-  value       = local.tailscale_butane_snippet
+  value       = terraform_data.butane_snippet.output
   description = "butane snippet to bring up tailscale"
 }

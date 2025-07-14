@@ -17,6 +17,12 @@ variable "tailscale_tags" {
   }
 }
 
+variable "replace_when_key_changes" {
+  type        = bool
+  default     = true
+  description = "If you're regularly rotating a key used to spawn non-ephemeral nodes, set this to false."
+}
+
 # TODO: implement this with drop-ins
 # variable "extra_tailscaled_args" {
 #   description = "List of extra arguments to pass to tailscaled"

@@ -34,11 +34,22 @@ module "tailscale_butane" {
   source             = "./modules/tailscale-butane"
   tailscale_auth_key = tailscale_tailnet_key.key.key
   tailscale_tags     = ["tag:periphery"]
+
+}
+locals {
+  rotation_seconds = 3600
+  rotation_minutes = (local.rotation_seconds / 60)
+}
+resource "time_rotating" "rotate_tailnet_key" {
+  rotation_minutes = local.rotation_minutes
 }
 resource "tailscale_tailnet_key" "key" {
   reusable      = false # Single-use key
   ephemeral     = false # Keep node when offline
   preauthorized = true  # Auto-authorize
-  expiry        = 3600
+  expiry        = local.rotation_seconds
   tags          = ["tag:periphery"]
+  lifecycle {
+    replace_triggered_by = [time_rotating.rotate_tailnet_key]
+  }
 }
