@@ -30,6 +30,10 @@ terraform {
       source  = "hashicorp/random"
       version = ">= 3.7.2"
     }
+    http = {
+      source  = "hashicorp/http"
+      version = ">= 3.5.0"
+    }
   }
 }
 

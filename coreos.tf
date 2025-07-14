@@ -57,8 +57,6 @@ resource "tailscale_tailnet_key" "key" {
     replace_triggered_by = [time_rotating.rotate_tailnet_key]
   }
 }
-
-
 module "coreos-periphery-vm" {
   source                = "./modules/coreos-vm"
   coreos_img            = local.coreos_img
@@ -74,11 +72,65 @@ module "coreos-periphery-vm" {
   #vm_id                 = 1234567
   extra_butane_snippets = concat(local.extra_butane_snippets, [module.tailscale_butane.butane_snippet])
 }
+data "http" "tailscale_node_deletion_token" {
+  url = "https://api.tailscale.com/api/v2/oauth/token"
 
+  method = "POST"
+
+  request_headers = {
+    Content-Type = "application/x-www-form-urlencoded"
+  }
+
+  request_body = join("&", [
+    "client_id=${local.ts_oauth_id}",
+    "client_secret=${local.ts_oauth_secret}"
+  ])
+}
+resource "terraform_data" "tailscale_node_deletion_hook" {
+  count = 0
+  input = sensitive([
+    data.tailscale_devices.devices_list.devices[0].node_id,
+    jsondecode(data.http.tailscale_node_deletion_token.response_body).access_token,
+  ])
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<-EOF
+      #!/usr/bin/env bash
+
+      response_code=$(curl -s -o /dev/null -w "%%{http_code}" https://api.tailscale.com/api/v2/device/${sensitive(self.output[0])} \
+        --request DELETE \
+        --header 'Authorization: Bearer ${sensitive(self.output[1])}')
+
+      case "$response_code" in
+        200)
+          echo "Success: Device deleted successfully."
+          ;;
+        400)
+          echo "Error: Invalid device value."
+          ;;
+        403)
+          echo "Error: Invalid API token."
+          ;;
+        500)
+          echo "Error: Internal server error."
+          ;;
+        501)
+          echo "Error: Device not owned by tailnet."
+          ;;
+        *)
+          echo "Unexpected HTTP response: $response_code"
+          ;;
+      esac
+
+    EOF
+  }
+}
 data "tailscale_devices" "devices_list" {
-  name_prefix = local.hostname
+  name_prefix = lower(local.hostname)
 }
 output "tailscale_devices" {
   value = data.tailscale_devices.devices_list.devices
-
+}
+output "this" {
+  value = data.tailscale_devices.devices_list.devices[0].node_id
 }
