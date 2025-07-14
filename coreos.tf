@@ -48,7 +48,7 @@ resource "time_rotating" "rotate_tailnet_key" {
   rotation_minutes = (local.rotation_seconds / 60)
 }
 resource "tailscale_tailnet_key" "key" {
-  reusable      = false # Single-use key
+  reusable      = true
   ephemeral     = false # Keep node when offline
   preauthorized = true  # Auto-authorize
   expiry        = local.rotation_seconds
