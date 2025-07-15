@@ -54,7 +54,11 @@ resource "tailscale_tailnet_key" "key" {
   expiry        = local.rotation_seconds
   tags          = ["tag:periphery"]
   lifecycle {
-    replace_triggered_by = [time_rotating.rotate_tailnet_key]
+    replace_triggered_by = [
+      time_rotating.rotate_tailnet_key,
+      null_resource.tailscale_node_deletion_hook,
+      #null_resource.vm_replacement_trigger,
+    ]
   }
 }
 module "coreos-periphery-vm" {
@@ -72,39 +76,63 @@ module "coreos-periphery-vm" {
   #vm_id                 = 1234567
   extra_butane_snippets = concat(local.extra_butane_snippets, [module.tailscale_butane.butane_snippet])
 }
-data "http" "tailscale_node_deletion_token" {
-  url = "https://api.tailscale.com/api/v2/oauth/token"
+# data "http" "tailscale_node_deletion_token" {
+#   url = "https://api.tailscale.com/api/v2/oauth/token"
+# 
+#   method = "POST"
+# 
+#   request_headers = {
+#     Content-Type = "application/x-www-form-urlencoded"
+#   }
+# 
+#   request_body = join("&", [
+#     "client_id=${local.ts_oauth_id}",
+#     "client_secret=${local.ts_oauth_secret}"
+#   ])
+# }
+locals {
+  tailscale_node_id = data.tailscale_device.tailscale_device.node_id
 
-  method = "POST"
-
-  request_headers = {
-    Content-Type = "application/x-www-form-urlencoded"
-  }
-
-  request_body = join("&", [
-    "client_id=${local.ts_oauth_id}",
-    "client_secret=${local.ts_oauth_secret}"
-  ])
+  #ts_oauth_token = jsondecode(data.http.tailscale_node_deletion_token.response_body).access_token
 }
-resource "terraform_data" "tailscale_node_deletion_hook" {
-  count = 1
-  input = sensitive([
-    data.tailscale_devices.devices_list.devices[0].node_id,
-    jsondecode(data.http.tailscale_node_deletion_token.response_body).access_token,
-  ])
-  triggers_replace = module.coreos-periphery-vm.ignition_hash_short
 
+# NOTE: We _cannot_ use terrform_data here, unless and until
+# Hashicorp decides to add a `sensitive = true` attribute to
+# it, or otherwise decides to respect the sensitivity of its
+# inputs when it generates its outputs.
+#
+resource "null_resource" "tailscale_node_deletion_hook" {
+  triggers = {
+    triggers_replace = data.tailscale_device.tailscale_device.node_id
+    ts_oauth_id      = local.ts_oauth_id
+    ts_oauth_secret  = local.ts_oauth_secret
+    # ts_oauth_token = local.ts_oauth_token
+    node_id = local.tailscale_node_id
+  }
+  lifecycle {
+    ignore_changes = [
+      triggers["ts_oauth_id"],
+      triggers["ts_oauth_secret"],
+      # triggers["node_id"]
+    ]
+  }
   provisioner "local-exec" {
     when       = destroy
     on_failure = continue
-    command    = <<-EOF
+    environment = {
+      OAUTH_CLIENT_ID     = self.triggers.ts_oauth_id
+      OAUTH_CLIENT_SECRET = nonsensitive(self.triggers.ts_oauth_secret)
+      #ts_oauth_token = self.triggers.ts_oauth_token
+      node_id = self.triggers.node_id
+    }
+    command = <<-EOF
       #!/usr/bin/env bash
-
-      response_code=$(curl -s -o /dev/null -w "%%{http_code}" https://api.tailscale.com/api/v2/device/${sensitive(self.output[0])} \
+      token="$(curl -d "client_id=$${OAUTH_CLIENT_ID}" -d "client_secret=$${OAUTH_CLIENT_SECRET}" "https://api.tailscale.com/api/v2/oauth/token" | jq -r '.access_token')"
+      response_code=$(curl -s -o /dev/null -w "%%{http_code}" "https://api.tailscale.com/api/v2/device/$${node_id}" \
         --request DELETE \
-        --header 'Authorization: Bearer ${sensitive(self.output[1])}')
+        --header 'Authorization: Bearer $${token}')
 
-      case "$response_code" in
+      case "$${response_code}" in
         200)
           echo "Success: Device deleted successfully."
           ;;
@@ -128,9 +156,10 @@ resource "terraform_data" "tailscale_node_deletion_hook" {
     EOF
   }
 }
-data "tailscale_devices" "devices_list" {
-  name_prefix = lower(local.hostname)
+data "tailscale_device" "tailscale_device" {
+  hostname = local.hostname
+  wait_for = "420s"
 }
-output "tailscale_devices" {
-  value = try(data.tailscale_devices.devices_list.devices, null)
+output "tailscale_node_id" {
+  value = local.tailscale_node_id
 }

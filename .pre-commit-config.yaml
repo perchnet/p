@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/b-/tf-pre-commit
-    rev: v0.1.30
+    rev: dabb0da
     hooks:
       - id: terraform-fmt
       - id: terraform-validate

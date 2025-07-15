@@ -47,6 +47,9 @@ locals {
 resource "random_pet" "random_hostname" {
   count = var.vm_name == null ? 1 : 0
 }
+
+# since we otherwise don't have an easily-accessible, easily-taintable resource to regenerate the vm
+resource "random_uuid" "smbios_uuid" {}
 resource "proxmox_virtual_environment_download_file" "coreos_img" {
   count        = var.coreos_img == null ? 1 : 0
   content_type = "iso"
@@ -61,6 +64,18 @@ resource "proxmox_virtual_environment_download_file" "coreos_img" {
   file_name               = "${module.coreos_metadata.coreos_img_filename}.img"
   decompression_algorithm = "zst"
 }
+resource "null_resource" "vm_replacement_trigger" {
+  triggers = {
+    replace_triggered_by = join(",", flatten(
+      [
+        var.extra_replacement_triggers,
+        [
+          random_uuid.smbios_uuid.id
+        ]
+      ]
+    ))
+  }
+}
 resource "proxmox_virtual_environment_vm" "coreos_vm" {
   # This must be the name of your Proxmox node within Proxmox
   node_name   = var.node_name
@@ -74,6 +89,12 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
   vm_id   = var.vm_id
   machine = "q35"
 
+  lifecycle {
+    replace_triggered_by = [null_resource.vm_replacement_trigger]
+  }
+  smbios {
+    uuid = random_uuid.smbios_uuid.id
+  }
   # Since we're installing the guest agent in our Butane config,
   # we should enable it here for better integration with Proxmox
   agent {

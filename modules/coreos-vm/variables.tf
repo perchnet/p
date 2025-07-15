@@ -133,3 +133,8 @@ variable "coreos_img" {
   })
   default = null
 }
+variable "extra_replacement_triggers" {
+  type    = list(string)
+  default = []
+
+}

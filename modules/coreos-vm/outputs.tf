@@ -43,3 +43,7 @@ output "network_interface_names" {
   description = "The network interface names published by the QEMU agent"
   value       = proxmox_virtual_environment_vm.coreos_vm.network_interface_names
 }
+output "uuid" {
+  description = "The SMBIOS UUID"
+  value       = proxmox_virtual_environment_vm.coreos_vm.smbios[0].uuid
+}
