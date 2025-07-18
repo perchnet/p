@@ -1,3 +1,7 @@
+module "ubuntu_dev_vm" {
+  source            = "./modules/ubuntu-vm"
+  import_from_image = module.proxmox_images.images["ubuntu_jammy"].id
+}
 # locals {
 #   cloud_init_datastore_id = "zssd-files"
 # }
