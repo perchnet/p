@@ -54,3 +54,9 @@ module "proxmox_images" {
     }
   }
 }
+
+output "images" {
+
+  value = module.proxmox_images.images
+
+}
