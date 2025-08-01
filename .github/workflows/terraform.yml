@@ -1,28 +1,30 @@
-name: "Terraform"
+name: Terraform
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
+
 on:
-  pull_request: {}
-  workflow_dispatch: {}
   merge_group:
+  pull_request:
+  workflow_dispatch:
 
 env:
-  TF_CLOUD_ORGANIZATION: "perchnet"
-  #TF_WORKSPACE: "proxmox"
-  CONFIG_DIRECTORY: "./"
+  CONFIG_DIRECTORY: ./
+  TF_CLOUD_ORGANIZATION: perchnet
+  # TF_WORKSPACE: proxmox
 
 jobs:
   terraform:
-    name: "Terraform"
+    name: Terraform
     runs-on: ubuntu-latest
+
     permissions:
-      actions: read        # Required to identify workflow run.
-      checks: write        # Required to add status summary.
-      contents: read       # Required to checkout repository.
+      actions: read # Required to identify workflow run.
+      checks: write # Required to add status summary.
+      contents: read # Required to checkout repository.
       pull-requests: write # Required to add PR comment.
-      issues: write
+
     steps:
       - uses: actions/checkout@v4
       - name: Install 1Password CLI
@@ -35,12 +37,12 @@ jobs:
           export-env: false # Export loaded secrets as environment variables
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          TF_ENCRYPT_PASSPHRASE: "op://perchnet/tf_encrypt_passphrase/password"
-          TF_API_TOKEN: "op://perchnet/terraform-token-github-actions/credential"
-          TS_OAUTH_CLIENT_ID: "op://perchnet/tailscale-oauth-github-runner/username"
-          TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
-          TF_VAR_onepassword_sdk_token: "op://perchnet/1p-terraform/credential"
-          #SSH_PRIVATE_KEY: "op://perchnet/proxmox-ssh/private key?ssh-format=openssh"
+          TF_ENCRYPT_PASSPHRASE: op://perchnet/tf_encrypt_passphrase/password
+          TF_API_TOKEN: op://perchnet/terraform-token-github-actions/credential
+          TS_OAUTH_CLIENT_ID: op://perchnet/tailscale-oauth-github-runner/username
+          TS_OAUTH_CLIENT_SECRET: op://perchnet/tailscale-oauth-github-runner/credential
+          TF_VAR_onepassword_sdk_token: op://perchnet/1p-terraform/credential
+          # SSH_PRIVATE_KEY: op://perchnet/proxmox-ssh/private key?ssh-format=openssh
 
       - name: Connect to Tailscale
         uses: tailscale/github-action@v3
@@ -48,23 +50,24 @@ jobs:
           oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:github-runner
-          use-cache: 'true'
-          #args: '--accept-routes'
+          use-cache: true
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_wrapper: false
           cli_config_credentials_token: ${{ steps.load-secrets.outputs.TF_API_TOKEN }}
+
       # - name: Setup SSH Agent
       #   uses: webfactory/ssh-agent@v0.9.0
       #   with:
-      #       ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
+      #     ssh-private-key: ${{ steps.load-secrets.outputs.SSH_PRIVATE_KEY }}
+
       - name: Init TF
         id: tf
         if: ${{ github.event_name == 'pull_request' }}
         uses: op5dev/tf-via-pr@v13
         with:
-          #working-directory: .
           command: init
           arg-lock: false
           format: true
@@ -91,7 +94,7 @@ jobs:
         run: |
           # Compose TFLint output.
           tflint='${{ steps.tflint.outputs.stderr || steps.tflint.outputs.stdout }}'
-          tflint="### TFLint errors:
+          tflint="# # # TFLint errors:
           <details><summary>TFLint error.</summary>
 
           \`\`\`hcl
@@ -109,18 +112,15 @@ jobs:
           gh api /repos/{owner}/{repo}/issues/comments/${{ steps.tf.outputs.comment-id }} --method PATCH --field body="$comment"
 
           # Exit workflow due to TFLint error.
-          # exit 1
+          exit 1
 
       - uses: op5dev/tf-via-pr@v13
         env:
           TF_VAR_onepassword_sdk_token: ${{ steps.load-secrets.outputs.TF_VAR_onepassword_sdk_token }}
         with:
-          working-directory: .
           command: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'apply' || 'plan' }}
           arg-lock: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') }}
-          format: true
           arg-refresh: ${{ (github.event_name == 'merge_group' || github.event_name == 'push') && 'false' || 'true' }} # Skip refresh on apply.
           expand-diff: true
           plan-parity: true
           plan-encrypt: ${{ steps.load-secrets.outputs.TF_ENCRYPT_PASSPHRASE }}
-          comment-method: recreate
