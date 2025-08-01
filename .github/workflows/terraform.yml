@@ -94,7 +94,7 @@ jobs:
         run: |
           # Compose TFLint output.
           tflint='${{ steps.tflint.outputs.stderr || steps.tflint.outputs.stdout }}'
-          tflint="# # # TFLint errors:
+          tflint="### TFLint errors:
           <details><summary>TFLint error.</summary>
 
           \`\`\`hcl
