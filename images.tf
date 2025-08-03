@@ -27,7 +27,7 @@ module "proxmox_images" {
       checksum_algorithm = "sha512" # Override default
     },
     ubuntu_jammy = {
-      file_name = "ubuntu-22.04-server-cloudimg-amd64.img"
+      file_name = "ubuntu-22.04-server-cloudimg-amd64.qcow.iso"
       url       = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
       # Uses defaults for content_type and checksum_algorithm
     },
