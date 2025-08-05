@@ -5,7 +5,7 @@ locals {
   user_hostname         = "tf-coreos-periphery"
   tailscale_host_suffix = random_id.tailscale_host_suffix.id
   hostname              = "${local.user_hostname}-${local.tailscale_host_suffix}"
-  tailscale_tags        = ["tag:periphery"]
+  tailscale_tags        = ["tag:komodo-periphery"]
   coreos_img            = module.proxmox_images.images["coreos_img"]
   password              = onepassword_item.coreos_module_password.password
   username              = onepassword_item.coreos_module_password.username
@@ -52,7 +52,7 @@ resource "tailscale_tailnet_key" "key" {
   ephemeral     = false # Keep node when offline
   preauthorized = true  # Auto-authorize
   expiry        = local.rotation_seconds
-  tags          = ["tag:periphery"]
+  tags          = local.tailscale_tags
   lifecycle {
     replace_triggered_by = [time_rotating.rotate_tailnet_key]
   }
