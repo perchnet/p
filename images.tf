@@ -60,4 +60,3 @@ output "images" {
   value = module.proxmox_images.images
 
 }
-
