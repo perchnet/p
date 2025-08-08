@@ -37,12 +37,12 @@ module "vm_minimal_config" {
 
   node        = local.pve_node
   vm_id       = 10000                                        # required
-  vm_name     = "vm-example-minimal"                         # optional
+  vm_name     = "vm-ubuntu22-minimal"                        # optional
   template_id = 8022                                         # required
   ci_ssh_key  = data.onepassword_item.proxmox_ssh.public_key # optional, add SSH key to "default" user
 }
 
-module "debian12" {
+module "debian13" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
 
 
@@ -55,15 +55,15 @@ module "debian12" {
   node = local.pve_node
 
   # Image Variables
-  image_filename           = "debian-12-generic-amd64.img" # Convert *.qcow2 image to *.img
+  image_filename           = "debian-13-generic-amd64.img" # Convert *.qcow2 image to *.img
   image_url                = "https://cloud.debian.org/images/cloud/trixie/20250806-2196/debian-13-generic-amd64-20250806-2196.qcow2"
   image_checksum           = "a7dfe434afc40afb0a791c777f3edba6b1a5c4b7315a61073fe5e34752d3bc5fd44ff67ef054eb4263687a97f7ce4896bf5bad5f216ef8b9d4a84541759e743d"
   image_checksum_algorithm = "sha512"
   image_overwrite          = false
 
   # VM Template Variables
-  vm_id       = 9012
-  vm_name     = "debian12"
+  vm_id       = 9013
+  vm_name     = "debian13"
   description = "Terraform generated template on ${timestamp()}"
   tags        = ["terraform", "template", "debian"]
   #ci_vendor_data = "local:snippets/vendor-data.yaml"
