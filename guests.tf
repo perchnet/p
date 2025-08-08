@@ -5,6 +5,13 @@
 module "ubuntu22" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
 
+
+  disk_storage = "zssd"
+  #scsihw = "virtio-scsi-single"
+  efi_disk_storage = "zssd"
+  ci_datastore_id  = "zssd"
+  #disks = [ {disk_storage = "zssd"} ]
+
   node = local.pve_node # Required
 
   # Image Variables
@@ -23,8 +30,13 @@ module "ubuntu22" {
 module "vm_minimal_config" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
 
-  node        = "pve"                                        # required
-  vm_id       = 100                                          # required
+  scsihw           = "virtio-scsi-single"
+  efi_disk_storage = "zssd"
+  ci_datastore_id  = "zssd"
+  #disks = [ {disk_storage = "zssd"} ]
+
+  node        = local.pve_node
+  vm_id       = 10000                                        # required
   vm_name     = "vm-example-minimal"                         # optional
   template_id = 8022                                         # required
   ci_ssh_key  = data.onepassword_item.proxmox_ssh.public_key # optional, add SSH key to "default" user
@@ -32,6 +44,13 @@ module "vm_minimal_config" {
 
 module "debian12" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
+
+
+  #scsihw = "virtio-scsi-single"
+  efi_disk_storage = "zssd"
+  ci_datastore_id  = "zssd"
+  #disks = [ {disk_storage = "zssd"} ]
+  disk_storage = "zssd"
 
   node = local.pve_node
 
