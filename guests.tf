@@ -3,7 +3,7 @@
 #  import_from_image = module.proxmox_images.images["ubuntu_jammy"].id
 #}
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=9ba813b"
 
 
   disk_storage = "zssd"
@@ -28,12 +28,13 @@ module "ubuntu22" {
   #ci_vendor_data = "local:snippets/vendor-data.yaml"                # Optional
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=9ba813b"
 
   scsihw = "virtio-scsi-single"
   #efi_disk_storage = "zssd"
-  ci_datastore_id = "zssd"
-  disks           = [{ disk_storage = "zssd" }]
+  ci_datastore_id  = "zssd"
+  disks            = [{ disk_storage = "zssd" }]
+  qemu_guest_agent = false
 
   node        = local.pve_node
   vm_id       = 10000                                        # required
@@ -43,7 +44,7 @@ module "vm_minimal_config" {
 }
 
 module "debian13" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=9ba813b"
 
 
   #scsihw = "virtio-scsi-single"
