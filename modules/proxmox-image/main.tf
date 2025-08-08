@@ -46,7 +46,7 @@ resource "proxmox_virtual_environment_download_file" "images" {
   for_each = local.images_with_defaults
 
   # Split filename at first dot, insert random ID, then rejoin
-  file_name = format("%s_TFimg-%s.%s",
+  file_name = format("TFimg_%s-%s.%s",
     split(".", each.value.file_name)[0],
     random_id.image_id[each.key].hex,
     join(".", slice(split(".", each.value.file_name), 1, length(split(".", each.value.file_name))))

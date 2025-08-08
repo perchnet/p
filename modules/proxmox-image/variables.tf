@@ -31,7 +31,7 @@ variable "images" {
   validation {
     condition = alltrue([
       for name, image in var.images :
-      contains(["iso", "import", "vztmpl"], coalesce(image.content_type, "iso"))
+      contains(["iso", "images", "import", "vztmpl"], coalesce(image.content_type, "images"))
     ])
     error_message = "Content type must be either 'iso', 'import', or 'vztmpl'."
   }
