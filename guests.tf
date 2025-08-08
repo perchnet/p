@@ -5,7 +5,7 @@
 module "ubuntu22" {
   source = "github.com/trfore/terraform-bpg-proxmox//modules/vm-template?ref=8ae945c"
 
-  node = "pve" # Required
+  node = local.pve_node # Required
 
   # Image Variables
   image_url                = "https://cloud-images.ubuntu.com/releases/22.04/release-20240207/ubuntu-22.04-server-cloudimg-amd64.img" # Required
@@ -20,11 +20,20 @@ module "ubuntu22" {
   tags        = ["terraform", "template", "ubuntu"]              # Optional
   #ci_vendor_data = "local:snippets/vendor-data.yaml"                # Optional
 }
+module "vm_minimal_config" {
+  source = "github.com/trfore/terraform-bpg-proxmox//modules/vm-clone?ref=8ae945c"
+
+  node        = "pve"                   # required
+  vm_id       = 100                     # required
+  vm_name     = "vm-example-minimal"    # optional
+  template_id = 8022                    # required
+  ci_ssh_key  = "~/.ssh/id_ed25519.pub" # optional, add SSH key to "default" user
+}
 
 module "debian12" {
   source = "github.com/trfore/terraform-bpg-proxmox//modules/vm-template?ref=8ae945c"
 
-  node = "pve"
+  node = local.pve_node
 
   # Image Variables
   image_filename           = "debian-12-generic-amd64.img" # Convert *.qcow2 image to *.img
