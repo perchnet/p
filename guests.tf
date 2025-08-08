@@ -3,7 +3,7 @@
 #  import_from_image = module.proxmox_images.images["ubuntu_jammy"].id
 #}
 module "ubuntu22" {
-  source = "github.com/trfore/terraform-bpg-proxmox//modules/vm-template?ref=8ae945c"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
 
   node = local.pve_node # Required
 
@@ -21,17 +21,17 @@ module "ubuntu22" {
   #ci_vendor_data = "local:snippets/vendor-data.yaml"                # Optional
 }
 module "vm_minimal_config" {
-  source = "github.com/trfore/terraform-bpg-proxmox//modules/vm-clone?ref=8ae945c"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
 
-  node        = "pve"                   # required
-  vm_id       = 100                     # required
-  vm_name     = "vm-example-minimal"    # optional
-  template_id = 8022                    # required
-  ci_ssh_key  = "~/.ssh/id_ed25519.pub" # optional, add SSH key to "default" user
+  node        = "pve"                                        # required
+  vm_id       = 100                                          # required
+  vm_name     = "vm-example-minimal"                         # optional
+  template_id = 8022                                         # required
+  ci_ssh_key  = data.onepassword_item.proxmox_ssh.public_key # optional, add SSH key to "default" user
 }
 
 module "debian12" {
-  source = "github.com/trfore/terraform-bpg-proxmox//modules/vm-template?ref=8ae945c"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
 
   node = local.pve_node
 
