@@ -30,9 +30,9 @@ module "ubuntu22" {
 module "vm_minimal_config" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=279da1a24cb13bfe78d44cde394970a31f42317c"
 
-  scsihw           = "virtio-scsi-single"
-  efi_disk_storage = "zssd"
-  ci_datastore_id  = "zssd"
+  scsihw = "virtio-scsi-single"
+  #efi_disk_storage = "zssd"
+  ci_datastore_id = "zssd"
   #disks = [ {disk_storage = "zssd"} ]
 
   node        = local.pve_node
