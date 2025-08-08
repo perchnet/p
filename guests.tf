@@ -33,7 +33,7 @@ module "vm_minimal_config" {
   scsihw = "virtio-scsi-single"
   #efi_disk_storage = "zssd"
   ci_datastore_id = "zssd"
-  #disks = [ {disk_storage = "zssd"} ]
+  disks           = [{ disk_storage = "zssd" }]
 
   node        = local.pve_node
   vm_id       = 10000                                        # required
