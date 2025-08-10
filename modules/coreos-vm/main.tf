@@ -105,6 +105,7 @@ resource "proxmox_virtual_environment_vm" "coreos_vm" {
     file_id      = var.coreos_img != null ? var.coreos_img.id : proxmox_virtual_environment_download_file.coreos_img[0].id
 
     size = var.vm_disk_size
+
   }
 
   # We need a network connection so that we can install the guest agent
