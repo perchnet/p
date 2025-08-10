@@ -147,27 +147,6 @@ provider "registry.terraform.io/integrations/github" {
   ]
 }
 
-provider "registry.terraform.io/loafoe/htpasswd" {
-  version = "1.2.1"
-  hashes = [
-    "h1:W1euQGM6t+QlB6Rq4fDbRKRHmeCIyYdIYdHrxL97BeE=",
-    "zh:14460c85ddc40a9ecadf583c22a7de91b83798a8ca4843949d50c3288c6f5bdd",
-    "zh:1af9416e28dd0a77c5d2c685561c4f60e19e2d606df0477ebc18eaa110c77807",
-    "zh:2245325864faaf027701ab12a04d641359a0dc439dd23c6e8f768407b78a5c18",
-    "zh:3813ff98198405d7c467565b52c7f0ad4533f43957da6390477dc898f8ed02c2",
-    "zh:3c0658e132232a181223f7ff65678d99cd2e8431c317f72281b67464e5e16892",
-    "zh:43505c0f42bc7635ec7c1fe5043c502f9b00ae4b5e74b81464bc494936643fc1",
-    "zh:52efdabb0abba99a33fd3ed981610f13c99bb383f94e997f90d95441d8558177",
-    "zh:75b5d9b4a610dfd0ff4dfb4039f61e79a0e56338e0a4cd45e0bc0edec34dfa62",
-    "zh:7aee5df091672d29f29dda57382a41d771fa21740cef6bb9a1b15afc6d84ffa4",
-    "zh:7ff618706e2953a21a22c7555e11f5cbe8e95c171704fcfdc6beedb0c25e49c0",
-    "zh:94e8a15c83a1a5a60ff1b58938dd9692d800fe05c5d8269e0916b5de03d89d3a",
-    "zh:c1ace4f322f9ec4956e4f30086da5b6a73f4d05e1266047d629b14a485c5a76d",
-    "zh:d4570075de49e3ee98494f7c44eab12e964c9776029ed536fd9352c3203cc635",
-    "zh:d99403b843de5939ea2e54b3ca46fd901d5c5b7fe34f44b8aeb8b38f4f792df6",
-  ]
-}
-
 provider "registry.terraform.io/poseidon/ct" {
   version     = "0.13.0"
   constraints = "0.13.0"

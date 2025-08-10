@@ -57,7 +57,6 @@ module "vm_minimal_config" {
       - ['sh', '-c', 'curl -fsSL https://tailscale.com/install.sh | sh']
       - tailscale up --authkey ${tailscale_tailnet_key.tailscale_key.key} --accept-routes --accept-dns
   EOF
-
 }
 
 resource "tailscale_tailnet_key" "tailscale_key" {
