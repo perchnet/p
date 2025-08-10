@@ -3,7 +3,7 @@
 #  import_from_image = module.proxmox_images.images["ubuntu_jammy"].id
 #}
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=9ba813b"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=ab72f1a"
 
 
   disk_storage = "zssd"
@@ -27,24 +27,51 @@ module "ubuntu22" {
   tags        = ["terraform", "template", "ubuntu"]              # Optional
   #ci_vendor_data = "local:snippets/vendor-data.yaml"                # Optional
 }
+locals {
+  ubuntu_vm_name = "vm-ubuntu22-minimal"                          # optional
+  ci_ssh_keys    = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
+}
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=9ba813b"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=ab72f1a"
 
   scsihw = "virtio-scsi-single"
   #efi_disk_storage = "zssd"
-  ci_datastore_id  = "zssd"
-  disks            = [{ disk_storage = "zssd" }]
-  qemu_guest_agent = false
+  ci_datastore_id     = "zssd"
+  disks               = [{ disk_storage = "zssd" }]
+  qemu_guest_agent    = true
+  ci_snippets_storage = "snippets"
 
-  node        = local.pve_node
-  vm_id       = 10000                                        # required
-  vm_name     = "vm-ubuntu22-minimal"                        # optional
-  template_id = 8022                                         # required
-  ci_ssh_key  = data.onepassword_item.proxmox_ssh.public_key # optional, add SSH key to "default" user
+  node                  = local.pve_node
+  vm_id                 = 10000 # required
+  vm_name               = local.ubuntu_vm_name
+  template_id           = 8022                                           # required
+  ci_ssh_keys           = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
+  ci_user_data_contents = <<-EOF
+    #cloud-config
+    hostname: ${local.ubuntu_vm_name}
+    ssh_authorized_keys: ${jsonencode(local.ci_ssh_keys)}
+    timezone: America/New_York
+    packages:
+          - qemu-guest-agent
+    runcmd:
+      - ['sh', '-c', 'curl -fsSL https://tailscale.com/install.sh | sh']
+      - tailscale up --authkey ${tailscale_tailnet_key.tailscale_key.key} --accept-routes --accept-dns
+  EOF
+}
+
+resource "tailscale_tailnet_key" "tailscale_key" {
+  reusable      = false
+  ephemeral     = false               # Keep node when offline
+  preauthorized = true                # Auto-authorize
+  expiry        = 600                 #local.rotation_seconds
+  tags          = ["tag:web-ingress"] #local.tailscale_tags
+  #  lifecycle {
+  #    replace_triggered_by = [time_rotating.rotate_tailnet_key]
+  #  }
 }
 
 module "debian13" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=9ba813b"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=ab72f1a"
 
 
   #scsihw = "virtio-scsi-single"
