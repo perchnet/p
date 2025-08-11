@@ -19,10 +19,10 @@ module "vm_minimal_config" {
 
   node = local.pve_node
   #vm_id                 = 10000 # required
-  vm_name               = local.ubuntu_vm_name
-  template_id           = module.ubuntu22.id
-  depends_on            = [module.ubuntu22]
-  ci_ssh_keys           = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
+  vm_name     = local.ubuntu_vm_name
+  template_id = module.ubuntu22.id
+  depends_on  = [module.ubuntu22]
+  #ci_ssh_keys             = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
   ci_user_data_contents = <<-EOF
     #cloud-config
     hostname: ${local.ubuntu_vm_name}
