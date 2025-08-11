@@ -7,7 +7,7 @@ locals {
   ci_ssh_keys    = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=4c2e805"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=93e7c76"
 
   #full_clone = false
   scsihw = "virtio-scsi-single"
