@@ -27,7 +27,6 @@ module "debian13" {
 module "ubuntu22" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=4877042"
 
-
   disk_storage = "zssd"
   #scsihw = "virtio-scsi-single"
   efi_disk_storage = "zssd"
