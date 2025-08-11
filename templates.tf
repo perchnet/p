@@ -1,5 +1,5 @@
 module "debian13" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=97989d3"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=11259b9"
 
   efi_disk_storage = "zssd"
   ci_datastore_id  = "zssd"
@@ -20,12 +20,12 @@ module "debian13" {
   qemu_guest_agent = false
   vm_id            = 9013
   vm_name          = "debian13"
-  description      = "Terraform generated template on ${timestamp()}"
-  tags             = ["terraform", "template", "debian"]
+  #description      = "Terraform generated template on ${timestamp()}"
+  tags = ["terraform", "template", "debian"]
   #ci_vendor_data = "local:snippets/vendor-data.yaml"
 }
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=97989d3"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=11259b9"
 
 
   disk_storage = "zssd"
@@ -45,8 +45,8 @@ module "ubuntu22" {
   # VM Template Variables
   qemu_guest_agent = false
   #vm_id       = 8022                                             # Required
-  vm_name     = "ubuntu22"                                       # Optional
-  description = "Terraform generated template on ${timestamp()}" # Optional
-  tags        = ["terraform", "template", "ubuntu"]              # Optional
+  vm_name = "ubuntu22" # Optional
+  #description = "Terraform generated template on ${timestamp()}" # Optional
+  tags = ["terraform", "template", "ubuntu"] # Optional
   #ci_vendor_data = "local:snippets/vendor-data.yaml"                # Optional
 }
