@@ -20,8 +20,8 @@ module "debian13" {
   qemu_guest_agent = false
   vm_id            = 9013
   vm_name          = "debian13"
-  description      = "Terraform generated template on ${timestamp()}"
-  tags             = ["terraform", "template", "debian"]
+  #description      = "Terraform generated template on ${timestamp()}"
+  tags = ["terraform", "template", "debian"]
   #ci_vendor_data = "local:snippets/vendor-data.yaml"
 }
 module "ubuntu22" {
@@ -45,8 +45,8 @@ module "ubuntu22" {
   # VM Template Variables
   qemu_guest_agent = false
   #vm_id       = 8022                                             # Required
-  vm_name     = "ubuntu22"                                       # Optional
-  description = "Terraform generated template on ${timestamp()}" # Optional
-  tags        = ["terraform", "template", "ubuntu"]              # Optional
+  vm_name = "ubuntu22" # Optional
+  #description = "Terraform generated template on ${timestamp()}" # Optional
+  tags = ["terraform", "template", "ubuntu"] # Optional
   #ci_vendor_data = "local:snippets/vendor-data.yaml"                # Optional
 }

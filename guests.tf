@@ -14,7 +14,7 @@ module "vm_minimal_config" {
   #efi_disk_storage = "zssd"
   ci_datastore_id     = "zssd"
   disks               = [{ disk_storage = "zssd" }]
-  qemu_guest_agent    = true
+  qemu_guest_agent    = false
   ci_snippets_storage = "snippets"
 
   node = local.pve_node
