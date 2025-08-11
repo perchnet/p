@@ -3,7 +3,7 @@
 #  import_from_image = module.proxmox_images.images["ubuntu_jammy"].id
 #}
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=ab72f1a"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=8fbee18"
 
 
   disk_storage = "zssd"
@@ -32,7 +32,7 @@ locals {
   ci_ssh_keys    = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=ab72f1a"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-clone?ref=8fbee18"
 
   scsihw = "virtio-scsi-single"
   #efi_disk_storage = "zssd"
@@ -71,10 +71,9 @@ resource "tailscale_tailnet_key" "tailscale_key" {
 }
 
 module "debian13" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=ab72f1a"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=8fbee18"
 
 
-  #scsihw = "virtio-scsi-single"
   efi_disk_storage = "zssd"
   ci_datastore_id  = "zssd"
   #disks = [ {disk_storage = "zssd"} ]
