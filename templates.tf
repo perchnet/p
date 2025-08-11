@@ -1,5 +1,5 @@
 module "debian13" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=11259b9"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=4877042"
 
   efi_disk_storage = "zssd"
   ci_datastore_id  = "zssd"
@@ -25,7 +25,7 @@ module "debian13" {
   #ci_vendor_data = "local:snippets/vendor-data.yaml"
 }
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=11259b9"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=4877042"
 
 
   disk_storage = "zssd"
