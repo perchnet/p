@@ -21,7 +21,7 @@ module "ubuntu22" {
   image_overwrite          = false                                                                                                    # Optional
 
   # VM Template Variables
-  vm_id       = 8022                                             # Required
+  #vm_id       = 8022                                             # Required
   vm_name     = "ubuntu22"                                       # Optional
   description = "Terraform generated template on ${timestamp()}" # Optional
   tags        = ["terraform", "template", "ubuntu"]              # Optional
@@ -41,10 +41,10 @@ module "vm_minimal_config" {
   qemu_guest_agent    = true
   ci_snippets_storage = "snippets"
 
-  node                  = local.pve_node
-  vm_id                 = 10000 # required
+  node = local.pve_node
+  #vm_id                 = 10000 # required
   vm_name               = local.ubuntu_vm_name
-  template_id           = 8022                                           # required
+  template_id           = module.ubuntu22.id
   ci_ssh_keys           = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
   ci_user_data_contents = <<-EOF
     #cloud-config
@@ -60,7 +60,7 @@ module "vm_minimal_config" {
 }
 
 resource "tailscale_tailnet_key" "tailscale_key" {
-  reusable      = false
+  reusable      = true
   ephemeral     = false               # Keep node when offline
   preauthorized = true                # Auto-authorize
   expiry        = 600                 #local.rotation_seconds
