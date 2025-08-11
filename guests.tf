@@ -73,7 +73,6 @@ resource "tailscale_tailnet_key" "tailscale_key" {
 module "debian13" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm-template?ref=8fbee18"
 
-
   efi_disk_storage = "zssd"
   ci_datastore_id  = "zssd"
   #disks = [ {disk_storage = "zssd"} ]
