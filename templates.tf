@@ -42,7 +42,7 @@ module "ubuntu22" {
         algorithm = "sha256"                                                                                                 # Optional
         overwrite = false                                                                                                    # Optional
       }
-      size = 20
+      #size = 20
     }
   ]
   # Image Variables
