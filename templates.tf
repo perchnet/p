@@ -1,5 +1,5 @@
 module "debian13" {
-  source   = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=b8088a2"
+  source   = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=aebb956"
   template = true
 
   efi = {
@@ -25,12 +25,12 @@ module "debian13" {
   tags             = ["terraform", "template", "debian"]
 }
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=b8088a2"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=aebb956"
   #source = "/var/home/bri/dev/terraform-proxmox-modules/modules/vm"
 
   template = true
-  efi      = {}
-  node     = local.pve_node
+  #efi      = {}
+  node = local.pve_node
 
   disks = [
     {
