@@ -8,11 +8,7 @@ locals {
 }
 module "vm_minimal_config" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=5c3ca92"
-  #source = "/home/bri/dev/terraform-proxmox-modules/modules/vm"
-
-  #full_clone = false
   scsihw = "virtio-scsi-single"
-  #efi_disk_storage = "zssd"
   cloudinit = {
     datastore_id     = "zssd-files"
     snippets_storage = "snippets"
@@ -28,16 +24,13 @@ module "vm_minimal_config" {
         - tailscale up --authkey ${tailscale_tailnet_key.tailscale_key.key} --accept-routes --accept-dns
     EOF
   }
-  #disks            = [{ disk_storage = "zssd" }]
   qemu_guest_agent = false
 
   node = local.pve_node
-  #vm_id                 = 10000 # required
   name = local.ubuntu_vm_name
   clone = {
     template_node = local.pve_node
     template_id   = module.ubuntu22.id
-    #full          = false
   }
   depends_on = [module.ubuntu22]
   #ci_ssh_keys             = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
