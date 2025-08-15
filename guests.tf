@@ -37,7 +37,7 @@ module "vm_minimal_config" {
   clone = {
     template_node = local.pve_node
     template_id   = module.ubuntu22.id
-    full          = false
+    #full          = false
   }
   depends_on = [module.ubuntu22]
   #ci_ssh_keys             = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
