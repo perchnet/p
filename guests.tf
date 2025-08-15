@@ -18,7 +18,7 @@ module "vm_minimal_config" {
             - qemu-guest-agent
       runcmd:
         - ['sh', '-c', 'curl -fsSL https://tailscale.com/install.sh | sh']
-        - tailscale up --authkey ${tailscale_tailnet_key.tailscale_key.key} --accept-routes --accept-dns
+        - tailscale up --authkey ${tailscale_tailnet_key.tailscale_key.key} --accept-routes --accept-dns --ssh
     EOF
   }
   qemu_guest_agent = false
