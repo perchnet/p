@@ -29,8 +29,8 @@ module "ubuntu22" {
   #source = "/var/home/bri/dev/terraform-proxmox-modules/modules/vm"
 
   template = true
-  efi      = {}
-  node     = local.pve_node
+  #efi      = {}
+  node = local.pve_node
 
   disks = [
     {
