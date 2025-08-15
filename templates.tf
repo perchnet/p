@@ -1,5 +1,5 @@
 module "debian13" {
-  source   = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=2bd3dfa"
+  source   = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=d6f8eab"
   template = true
 
   efi = {
@@ -25,7 +25,7 @@ module "debian13" {
   tags             = ["terraform", "template", "debian"]
 }
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=2bd3dfa"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=d6f8eab"
   #source = "/var/home/bri/dev/terraform-proxmox-modules/modules/vm"
 
   template = true

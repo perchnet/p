@@ -7,7 +7,7 @@ locals {
   ci_ssh_keys    = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=2bd3dfa"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=d6f8eab"
   #started = true
   scsihw = "virtio-scsi-single"
   cloudinit = {
@@ -27,6 +27,9 @@ module "vm_minimal_config" {
   }
   qemu_guest_agent = false
 
+  nics = [
+    { ip_config = { ipv4 = { address = "dhcp" } } }
+  ]
   node = local.pve_node
   name = local.ubuntu_vm_name
   clone = {
