@@ -1,5 +1,5 @@
 module "debian13" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=9f61db8"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=5c3ca92"
   #source = "/home/bri/dev/terraform-proxmox-modules/modules/vm"
 
   efi = {
@@ -26,7 +26,7 @@ module "debian13" {
   #ci_vendor_data = "local:snippets/vendor-data.yaml"
 }
 module "ubuntu22" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=9f61db8"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=5c3ca92"
   #source = "/var/home/bri/dev/terraform-proxmox-modules/modules/vm"
 
   efi  = {}
