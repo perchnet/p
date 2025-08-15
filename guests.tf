@@ -7,7 +7,7 @@ locals {
   ci_ssh_keys    = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=871b802"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=845f30d"
   #source = "/home/bri/dev/terraform-proxmox-modules/modules/vm"
 
   #full_clone = false
