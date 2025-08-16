@@ -37,11 +37,11 @@ module "ubuntu22" {
       storage = "zssd"
       download = {
         storage   = "zssd-files"
-        url       = "https://cloud-images.ubuntu.com/releases/22.04/release-20240207/ubuntu-22.04-server-cloudimg-amd64.img"   # Required
-        filename  = "https://cloud-images.ubuntu.com/releases/22.04/release-20240207/ubuntu-22.04-server-cloudimg-amd64.qcow2" # Required
-        checksum  = "7eb9f1480956af75359130cd41ba24419d6fd88d3af990ea9abe97c2f9459fda"                                         # Required
-        algorithm = "sha256"                                                                                                   # Optional
-        overwrite = false                                                                                                      # Optional
+        url       = "https://cloud-images.ubuntu.com/releases/22.04/release-20240207/ubuntu-22.04-server-cloudimg-amd64.img" # Required
+        filename  = "ubuntu-22.04-server-cloudimg-amd64.qcow2"                                                               # Required
+        checksum  = "7eb9f1480956af75359130cd41ba24419d6fd88d3af990ea9abe97c2f9459fda"                                       # Required
+        algorithm = "sha256"                                                                                                 # Optional
+        overwrite = false                                                                                                    # Optional
       }
       #size = 20
     }
