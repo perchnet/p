@@ -5,7 +5,7 @@ variable "images" {
     url = string
 
     # Optional fields with defaults
-    content_type            = optional(string, "iso")
+    content_type            = optional(string, "import")
     datastore_id            = optional(string)
     node_name               = optional(string)
     checksum                = optional(string)

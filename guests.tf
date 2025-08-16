@@ -1,9 +1,22 @@
+module "block_storage" {
+  source  = "./modules/block-storage"
+  node    = local.pve_node
+  storage = "zssd"
+  size    = 10
+}
 locals {
   debian_vm_name = "vm-debian13-minimal"                          # optional
   ci_ssh_keys    = [data.onepassword_item.proxmox_ssh.public_key] # optional, add SSH key to "default" user
 }
+
+resource "terraform_data" "tailscale_auth_key_stable" {
+  input = sensitive(tailscale_tailnet_key.tailscale_key.key)
+  lifecycle {
+    ignore_changes = [input]
+  }
+}
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=d6f8eab"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=80ea731"
   #started = true
   scsihw = "virtio-scsi-single"
   cloudinit = {
@@ -18,7 +31,7 @@ module "vm_minimal_config" {
             - qemu-guest-agent
       runcmd:
         - ['sh', '-c', 'curl -fsSL https://tailscale.com/install.sh | sh']
-        - tailscale up --authkey ${tailscale_tailnet_key.tailscale_key.key} --accept-routes --accept-dns --ssh
+        - tailscale up --authkey ${terraform_data.tailscale_auth_key_stable.output} --accept-routes --accept-dns --ssh
     EOF
   }
   qemu_guest_agent = false
@@ -32,6 +45,13 @@ module "vm_minimal_config" {
     template_node = local.pve_node
     template_id   = module.debian13.id
   }
+  disks = [
+    {
+      storage   = "zssd"
+      interface = "scsi0"
+      size      = 10
+    }, module.block_storage.disk
+  ]
   depends_on = [module.debian13]
 }
 
