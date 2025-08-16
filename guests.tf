@@ -16,7 +16,7 @@ resource "terraform_data" "tailscale_auth_key_stable" {
   }
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=80ea731"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=e022451"
   #started = true
   scsihw = "virtio-scsi-single"
   cloudinit = {
@@ -50,7 +50,12 @@ module "vm_minimal_config" {
       storage   = "zssd"
       interface = "scsi0"
       size      = 10
-    }, module.block_storage.disk
+    },
+    {
+      storage   = module.block_storage.disk.datastore_id
+      interface = "scsi1"
+      size      = module.block_storage.disk.size + 1
+    }
   ]
   depends_on = [module.debian13]
 }

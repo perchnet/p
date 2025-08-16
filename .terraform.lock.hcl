@@ -160,6 +160,29 @@ provider "registry.terraform.io/poseidon/ct" {
   ]
 }
 
+provider "registry.terraform.io/public-cloud-wl/slugify" {
+  version     = "0.1.1"
+  constraints = ">= 0.1.1"
+  hashes = [
+    "h1:iOJEMYX1bLfUnKjSxluQkKijr5NgWSqb2lU9Ag2Q12w=",
+    "zh:13f77dedcc74256053ac51512372510d722116bf58e119fac203fe599d667720",
+    "zh:2223be634f684f76e265efdaafdf95a948ba9e44f09f8a89540bdb564eff17f1",
+    "zh:73e8b763c796d57186756cf0bab75323e2d92c873f1df8eccd8a7e336a2e3e81",
+    "zh:890df766e9b839623b1f0437355032a3c006226a6c200cd911e15ee1a9014e9f",
+    "zh:9f83adcf17de03afb5c27111cb26c580dc5296dffd40fca4571e81ad0bad3bad",
+    "zh:a5414ade8cbae9aea10dee79e43da247ceecb7e4a54e76d39906ee60b7365a7d",
+    "zh:bd118ead731e129c92c0dfe3c9a2ebbd8fa25ba6508deaaaccb9ac3a7f70af2d",
+    "zh:c8ce48ad921956edcee0643cb6184442f3deb438e5605a53794dfd6e8f89a559",
+    "zh:d96da8a32ef2b807ed3bd943294c6e1d0bd5fc3a793deb762f74d0c54aeff335",
+    "zh:e30a218b474afe082e005faf51c323ed8747d46845bfacab4cd3adc0c51704ec",
+    "zh:e3cd265c38da6e65974ac1b9b6be608ba0534178f16f059ad13672de6846e32e",
+    "zh:f2ded7f8c771a603ad3e2df84986b5f175c38049b7a9ab4a3cd384abafb33dff",
+    "zh:f2ece1996cf686583afd19384041204a32e08389dc6f4f105501584e653e797d",
+    "zh:fa2418b74cea55d29dad24f5095aaf30d6253d63ebac3c0c47949b3de8087c88",
+    "zh:fdc8d3fbca6a19db203802e7a7337075e39b9ffb7a3887a7583e379be61bde17",
+  ]
+}
+
 provider "registry.terraform.io/tailscale/tailscale" {
   version     = "0.21.1"
   constraints = ">= 0.21.1"
