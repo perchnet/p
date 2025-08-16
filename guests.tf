@@ -2,7 +2,7 @@ module "block_storage" {
   source  = "./modules/block-storage"
   node    = local.pve_node
   storage = "zssd"
-  size    = 1
+  size    = 10
 }
 locals {
   debian_vm_name = "vm-debian13-minimal"                          # optional
