@@ -21,7 +21,7 @@ module "proxmox_images" {
 
   images = {
     debian_bookworm = {
-      file_name          = "debian-12-nocloud-amd64.qcow2.img"
+      file_name          = "debian-12-nocloud-amd64.qcow2"
       url                = "https://cloud.debian.org/images/cloud/bookworm/20250428-2096/debian-12-nocloud-amd64-20250428-2096.qcow2"
       checksum           = "38557e6d8e8738392dc5959b679c4567dbe4ce6475aaa3ba054caab4f1e4f90876c49f6e20be79a5a151105e121f2e19a51319bdb0a223c90fea11b0a13deb25"
       checksum_algorithm = "sha512" # Override default
@@ -32,7 +32,7 @@ module "proxmox_images" {
       # Uses defaults for content_type and checksum_algorithm
     },
     debian_trixie = {
-      file_name          = "debian-13-genericcloud-amd64.qcow2.img"
+      file_name          = "debian-13-genericcloud-amd64.qcow2"
       url                = "https://cloud.debian.org/images/cloud/trixie/daily/20250619-2148/debian-13-generic-amd64-daily-20250619-2148.qcow2"
       checksum           = "046d9691b1a6026fd457b85c85476fa721249dd9379e23ab877bb34b2d6fa662994b03a23ffe7b527c5421cb1a69e81b6873c82f0e1ac9403bbaad263fffd3d8"
       checksum_algorithm = "sha512"
