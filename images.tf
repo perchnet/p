@@ -27,7 +27,7 @@ module "proxmox_images" {
       checksum_algorithm = "sha512" # Override default
     },
     ubuntu_jammy = {
-      file_name = "ubuntu-22.04-server-cloudimg-amd64.qcow.img"
+      file_name = "ubuntu-22.04-server-cloudimg-amd64.qcow"
       url       = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
       # Uses defaults for content_type and checksum_algorithm
     },
@@ -38,7 +38,7 @@ module "proxmox_images" {
       checksum_algorithm = "sha512"
     },
     ubuntu_noble_cloud_image = { # TODO: use renovate to update the checksum
-      file_name          = "ubuntu-24.04-cloudimg-amd64.qcow.img"
+      file_name          = "ubuntu-24.04-cloudimg-amd64.qcow"
       url                = "https://cloud-images.ubuntu.com/noble/20250610/noble-server-cloudimg-amd64.img"
       checksum           = "92d2c4591af9a82785464bede56022c49d4be27bde1bdcf4a9fccc62425cda43"
       checksum_algorithm = "sha256"
@@ -48,8 +48,8 @@ module "proxmox_images" {
       checksum           = module.coreos_metadata.download_sum
       checksum_algorithm = "sha256"
 
-      # proxmox won't download it unless you say it ends in .img
-      file_name               = "${module.coreos_metadata.coreos_img_filename}.img"
+      # proxmox won't download it unless you say it ends in .qcow2
+      file_name               = "${module.coreos_metadata.coreos_img_filename}.qcow2"
       decompression_algorithm = "zst"
     }
   }
