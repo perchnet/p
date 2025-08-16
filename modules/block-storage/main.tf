@@ -1,12 +1,3 @@
-terraform {
-  required_version = ">=1.5.0"
-  required_providers {
-    proxmox = {
-      source  = "bpg/proxmox"
-      version = ">=0.53.1"
-    }
-  }
-}
 resource "proxmox_virtual_environment_vm" "block_storage" {
   node_name = var.node
   started   = false
