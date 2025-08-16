@@ -16,7 +16,7 @@ resource "terraform_data" "tailscale_auth_key_stable" {
   }
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=6392c48"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=97c67aa"
   #started = true
   scsihw = "virtio-scsi-single"
   cloudinit = {
