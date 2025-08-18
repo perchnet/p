@@ -3,6 +3,7 @@ module "n8n_block_storage" {
   node    = local.pve_node
   storage = "zssd"
   size    = 10
+  name    = "n8n-block-storage"
 }
 locals {
   ts_tags = ["tag:web-ingress"]
@@ -19,8 +20,9 @@ resource "terraform_data" "n8n_tskey_stable_replacement_hook" {
   input = [module.n8n_vm.creation_date]
 }
 module "n8n_vm" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=ca1d1d1"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=8d9dd51"
   #started = true
+  vcpu   = 4
   scsihw = "virtio-scsi-single"
   cloudinit = {
     datastore_id     = "zssd-files"
@@ -59,6 +61,7 @@ module "n8n_vm" {
   clone = {
     template_node = local.pve_node
     template_id   = module.debian13.id
+    full          = false
   }
   disks = [
     {
