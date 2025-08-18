@@ -16,7 +16,10 @@ variable "name" {
   type    = string
   default = "DATA_VM"
 }
-
+variable "description" {
+  default = null
+  type    = string
+}
 variable "tags" {
   type    = list(string)
   default = ["terraform", "block-storage"]

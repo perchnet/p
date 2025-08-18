@@ -1,9 +1,19 @@
+locals {
+  name        = provider::slugify::slug(var.name) # "hello-world"
+  description = var.description != null ? var.description : "Terraform block storage created on ${time_static.creation_date.rfc3339}"
+}
+resource "time_static" "creation_date" {
+}
+resource "terraform_data" "name" {
+
+}
 resource "proxmox_virtual_environment_vm" "block_storage" {
-  node_name = var.node
-  started   = false
-  on_boot   = false
-  name      = var.name
-  tags      = var.tags
+  node_name   = var.node
+  started     = false
+  on_boot     = false
+  name        = local.name
+  description = local.description
+  tags        = var.tags
 
   boot_order = ["ide3"] # set to empty cdrom
   cdrom {               # to force the VM to be unbootable
