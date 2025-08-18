@@ -1,6 +1,47 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
 repos:
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "v0.20.0"
+    hooks:
+      - id: terraform-docs-go
+        language_version: "1.24.6"
+        #args: ["markdown", "table", "--output-file", "README.md", "."]
+        args: ["markdown", "document", "--output-file", "README.md", "."]
+
+  #- repo: https://github.com/pre-commit/mirrors-prettier
+  #  rev: v3.1.0
+  #  hooks:
+  #    - id: prettier
+  #      additional_dependencies:
+  #        - prettier
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: no-commit-to-branch
+        args: [--branch, main]
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+  #- repo: https://github.com/igorshubovych/markdownlint-cli
+  #  rev: v0.40.0
+  #  hooks:
+  #    - id: markdownlint
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+      - id: shellcheck
+  #       args: ["--severity=warning"]  # Optionally only show errors and warnings
+
   - repo: https://github.com/b-/tf-pre-commit
-    rev: v0.1.30
+    rev: dabb0da
     hooks:
       - id: terraform-fmt
       - id: terraform-validate
