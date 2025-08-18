@@ -20,7 +20,7 @@ module "my_tailscale_vm" {
   vm_authorized_keys      = [
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC... your-public-key"
   ]
-  
+
   # Optional: additional butane snippets
   extra_butane_snippets = [
     <<-EOF

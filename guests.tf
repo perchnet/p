@@ -12,8 +12,12 @@ locals {
 resource "terraform_data" "tailscale_auth_key_stable" {
   input = sensitive(tailscale_tailnet_key.tailscale_key.key)
   lifecycle {
-    ignore_changes = [input]
+    ignore_changes       = [input]
+    replace_triggered_by = [terraform_data.tskey_replacement_hook]
   }
+}
+resource "terraform_data" "tskey_replacement_hook" {
+  input = [module.vm_minimal_config.creation_date]
 }
 module "vm_minimal_config" {
   source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=e022451"
@@ -54,7 +58,7 @@ module "vm_minimal_config" {
     {
       storage   = module.block_storage.disk.datastore_id
       interface = "scsi1"
-      size      = module.block_storage.disk.size + 1
+      size      = module.block_storage.disk.size
     }
   ]
   depends_on = [module.debian13]

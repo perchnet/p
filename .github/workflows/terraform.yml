@@ -18,9 +18,9 @@ jobs:
     name: "Terraform"
     runs-on: ubuntu-latest
     permissions:
-      actions: read        # Required to identify workflow run.
-      checks: write        # Required to add status summary.
-      contents: read       # Required to checkout repository.
+      actions: read # Required to identify workflow run.
+      checks: write # Required to add status summary.
+      contents: read # Required to checkout repository.
       pull-requests: write # Required to add PR comment.
       issues: write
     steps:
@@ -48,7 +48,7 @@ jobs:
           oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:github-runner
-          use-cache: 'true'
+          use-cache: "true"
           #args: '--accept-routes'
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
