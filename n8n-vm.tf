@@ -43,19 +43,19 @@ module "n8n_vm" {
             '--ssh',
             '--advertise-tags=${join(",", local.ts_tags)}'
           ]
-        - [ 'sh', '-c', 'curl -fsSL https://raw.githubusercontent.com/moghtech/komodo/main/scripts/setup-periphery.py | python3' ]
+        - [ '/usr/bin/env', 'HOME=/root','sh', '-c', 'curl -fsSL https://raw.githubusercontent.com/moghtech/komodo/main/scripts/setup-periphery.py | python3' ]
         - [ 'systemctl', 'enable', '--now', 'periphery' ]
         - [ 'tailscale', 'serve', '--bg', '8120' ]
     EOF
 
   }
-  qemu_guest_agent = true
+  qemu_guest_agent = false
 
   nics = [
     { ip_config = { ipv4 = { address = "dhcp" } } }
   ]
   node = local.pve_node
-  name = local.debian_vm_name
+  name = "n8n-vm"
   clone = {
     template_node = local.pve_node
     template_id   = module.debian13.id
