@@ -55,6 +55,18 @@ Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
 Version: e022451
 
+### <a name="module_n8n_block_storage"></a> [n8n\_block\_storage](#module\_n8n\_block\_storage)
+
+Source: ./modules/block-storage
+
+Version:
+
+### <a name="module_n8n_vm"></a> [n8n\_vm](#module\_n8n\_vm)
+
+Source: github.com/b-/terraform-bpg-proxmox//modules/vm
+
+Version: e022451
+
 ### <a name="module_pkcs8_to_pem"></a> [pkcs8\_to\_pem](#module\_pkcs8\_to\_pem)
 
 Source: ./modules/ssh-key-converter
@@ -86,6 +98,8 @@ The following resources are used by this module:
 - [github_repository.p_repository](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) (resource)
 - [github_repository_ruleset.p_merge_queue](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset) (resource)
 - [tailscale_tailnet_key.tailscale_key](https://registry.terraform.io/providers/tailscale/tailscale/latest/docs/resources/tailnet_key) (resource)
+- [terraform_data.n8n_tskey_stable](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [terraform_data.n8n_tskey_stable_replacement_hook](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [terraform_data.tailscale_auth_key_stable](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [terraform_data.tskey_replacement_hook](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [onepassword_item.github_infra_app](https://registry.terraform.io/providers/1Password/onepassword/2.1.2/docs/data-sources/item) (data source)
