@@ -67,18 +67,6 @@ Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
 Version: ca1d1d1
 
-### <a name="module_n8n_block_storage"></a> [n8n\_block\_storage](#module\_n8n\_block\_storage)
-
-Source: ./modules/block-storage
-
-Version:
-
-### <a name="module_n8n_vm"></a> [n8n\_vm](#module\_n8n\_vm)
-
-Source: github.com/b-/terraform-bpg-proxmox//modules/vm
-
-Version: e022451
-
 ### <a name="module_pkcs8_to_pem"></a> [pkcs8\_to\_pem](#module\_pkcs8\_to\_pem)
 
 Source: ./modules/ssh-key-converter
