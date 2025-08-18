@@ -11,3 +11,13 @@ variable "size" {
   type        = number
   default     = 1
 }
+
+variable "name" {
+  type    = string
+  default = "DATA_VM"
+}
+
+variable "tags" {
+  type    = list(string)
+  default = ["terraform", "block-storage"]
+}
