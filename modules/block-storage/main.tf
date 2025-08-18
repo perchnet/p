@@ -2,6 +2,8 @@ resource "proxmox_virtual_environment_vm" "block_storage" {
   node_name = var.node
   started   = false
   on_boot   = false
+  name      = var.name
+  tags      = var.tags
 
   boot_order = ["ide3"] # set to empty cdrom
   cdrom {               # to force the VM to be unbootable

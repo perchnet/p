@@ -48,6 +48,7 @@ module "n8n_vm" {
         - [ '/usr/bin/env', 'HOME=/root','sh', '-c', 'curl -fsSL https://raw.githubusercontent.com/moghtech/komodo/main/scripts/setup-periphery.py | python3' ]
         - [ 'systemctl', 'enable', '--now', 'periphery' ]
         - [ 'tailscale', 'serve', '--bg', '8120' ]
+        - [ 'sh', '-c', 'curl -fsSL https://get.docker.com | sh' ]
     EOF
 
   }
