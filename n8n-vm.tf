@@ -29,8 +29,11 @@ module "n8n_vm" {
       #cloud-config
       hostname: n8n-vm
       ssh_authorized_keys: ${jsonencode(data.onepassword_item.proxmox_ssh.public_key)}
-      mounts:
-        - [ "vda", "/srv", "ext4", "x-systemd.makefs,x-systemd.mount-timeout=2,nofail", "0", "2"]
+      write_file:
+        - path: /etc/fstab
+          append: true
+          content: |
+            /dev/vda /srv ext4 x-systemd.makefs,x-systemd.mount-timeout=2,nofail 0 2
       timezone: America/New_York
       runcmd:
         - ['sh', '-c', 'curl -fsSL https://tailscale.com/install.sh | sh']
