@@ -53,7 +53,7 @@ Version: c700d78
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: e022451
+Version: ca1d1d1
 
 ### <a name="module_n8n_block_storage"></a> [n8n\_block\_storage](#module\_n8n\_block\_storage)
 
@@ -65,7 +65,7 @@ Version:
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: e022451
+Version: ca1d1d1
 
 ### <a name="module_pkcs8_to_pem"></a> [pkcs8\_to\_pem](#module\_pkcs8\_to\_pem)
 
@@ -83,13 +83,13 @@ Version:
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: e022451
+Version: ca1d1d1
 
 ### <a name="module_vm_minimal_config"></a> [vm\_minimal\_config](#module\_vm\_minimal\_config)
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: e022451
+Version: ca1d1d1
 
 ## Resources
 

@@ -20,7 +20,7 @@ resource "terraform_data" "tskey_replacement_hook" {
   input = [module.vm_minimal_config.creation_date]
 }
 module "vm_minimal_config" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=e022451"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=ca1d1d1"
   #started = true
   scsihw = "virtio-scsi-single"
   cloudinit = {
