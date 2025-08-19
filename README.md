@@ -13,7 +13,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_onepassword"></a> [onepassword](#requirement\_onepassword) (2.1.2)
 
-- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (>= 0.79)
+- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (>= 0.82.1)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.7.2)
 
@@ -53,7 +53,7 @@ Version: c700d78
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: 8d9dd51
+Version: 3b55033
 
 ### <a name="module_n8n_block_storage"></a> [n8n\_block\_storage](#module\_n8n\_block\_storage)
 
@@ -65,7 +65,7 @@ Version:
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: 8d9dd51
+Version: 3b55033
 
 ### <a name="module_pkcs8_to_pem"></a> [pkcs8\_to\_pem](#module\_pkcs8\_to\_pem)
 
@@ -83,13 +83,13 @@ Version:
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: 8d9dd51
+Version: 3b55033
 
 ### <a name="module_vm_minimal_config"></a> [vm\_minimal\_config](#module\_vm\_minimal\_config)
 
 Source: github.com/b-/terraform-bpg-proxmox//modules/vm
 
-Version: 8d9dd51
+Version: 3b55033
 
 ## Resources
 

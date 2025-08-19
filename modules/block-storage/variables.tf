@@ -14,9 +14,12 @@ variable "size" {
 
 variable "name" {
   type    = string
-  default = "DATA_VM"
+  default = "Data-vm"
 }
-
+variable "description" {
+  default = null
+  type    = string
+}
 variable "tags" {
   type    = list(string)
   default = ["terraform", "block-storage"]

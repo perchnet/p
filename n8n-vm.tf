@@ -20,7 +20,7 @@ resource "terraform_data" "n8n_tskey_stable_replacement_hook" {
   input = [module.n8n_vm.creation_date]
 }
 module "n8n_vm" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=8d9dd51"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=3b55033"
   #started = true
   vcpu   = 4
   scsihw = "virtio-scsi-single"
@@ -48,6 +48,13 @@ module "n8n_vm" {
         - [ '/usr/bin/env', 'HOME=/root','sh', '-c', 'curl -fsSL https://raw.githubusercontent.com/moghtech/komodo/main/scripts/setup-periphery.py | python3' ]
         - [ 'systemctl', 'enable', '--now', 'periphery' ]
         - [ 'tailscale', 'serve', '--bg', '8120' ]
+        - [ 'sh', '-c', 'curl -fsSL https://get.docker.com | sh' ]
+        - [ 'sh', '-c', 'echo "/dev/vda /srv ext4 x-systemd.makefs,x-systemd.mount-timeout=2,nofail 0 2" >> /etc/fstab' ]
+        - [ 'systemctl', 'enable', '--now', 'docker' ]
+      power_state:
+        mode: reboot
+        message: rebooting to run systemd.makefs
+        timeout: 480
     EOF
 
   }
@@ -70,9 +77,10 @@ module "n8n_vm" {
       size      = 10
     },
     {
-      storage   = module.block_storage.disk.datastore_id
-      interface = "virtio0"
-      size      = module.n8n_block_storage.disk.size
+      storage           = module.block_storage.disk.datastore_id
+      path_in_datastore = module.block_storage.disk.path_in_datastore
+      interface         = "virtio0"
+      size              = module.n8n_block_storage.disk.size
     }
   ]
   depends_on = [module.debian13]
