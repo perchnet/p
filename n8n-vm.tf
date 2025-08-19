@@ -20,7 +20,7 @@ resource "terraform_data" "n8n_tskey_stable_replacement_hook" {
   input = [module.n8n_vm.creation_date]
 }
 module "n8n_vm" {
-  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=8d9dd51"
+  source = "github.com/b-/terraform-bpg-proxmox//modules/vm?ref=3b55033"
   #started = true
   vcpu   = 4
   scsihw = "virtio-scsi-single"
