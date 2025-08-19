@@ -78,7 +78,7 @@ module "n8n_vm" {
     },
     {
       storage           = module.block_storage.disk.datastore_id
-      path_in_datastore = module.block_storage.disk.id
+      path_in_datastore = module.block_storage.disk.path_in_datastore
       interface         = "virtio0"
       size              = module.n8n_block_storage.disk.size
     }
