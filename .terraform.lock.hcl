@@ -26,7 +26,7 @@ provider "registry.terraform.io/1password/onepassword" {
 
 provider "registry.terraform.io/bpg/proxmox" {
   version     = "0.82.1"
-  constraints = ">= 0.53.1, >= 0.82.0"
+  constraints = ">= 0.53.1, >= 0.82.1"
   hashes = [
     "h1:55q1ToI+OZWYkZ2OnOGv8DcYp8q9LFkHAUVkBzast4U=",
     "zh:073703d7444a09af730cb64ee580931d993bc177f8e7dd2aa71fb6b09651eb47",
