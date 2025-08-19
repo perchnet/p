@@ -1,5 +1,5 @@
 locals {
-  name        = provider::slugify::slug(var.name) # "hello-world"
+  name        = var.name
   description = var.description != null ? var.description : "Terraform block storage created on ${time_static.creation_date.rfc3339}"
 }
 resource "time_static" "creation_date" {

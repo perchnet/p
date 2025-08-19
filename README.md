@@ -13,7 +13,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_onepassword"></a> [onepassword](#requirement\_onepassword) (2.1.2)
 
-- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (>= 0.79)
+- <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) (>= 0.82)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.7.2)
 

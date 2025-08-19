@@ -7,7 +7,7 @@ terraform {
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = ">=0.53.1"
+      version = ">=0.82.0"
     }
     time = {
       source  = "hashicorp/time"
