@@ -26,13 +26,13 @@ jobs:
       pull-requests: write # Required to add PR comment.
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install 1Password CLI
-        uses: 1password/install-cli-action@v1
+        uses: 1password/install-cli-action@v2
 
       - name: Load secrets
         id: load-secrets
-        uses: 1password/load-secrets-action@v2
+        uses: 1password/load-secrets-action@v3
         with:
           export-env: false # Export loaded secrets as environment variables
         env:
@@ -50,8 +50,8 @@ jobs:
           oauth-client-id: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:github-runner
-          use-cache: true
-
+          use-cache: "true"
+          #args: '--accept-routes'
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -75,7 +75,7 @@ jobs:
 
       - name: Setup TFLint
         if: ${{ github.event_name == 'pull_request' }}
-        uses: terraform-linters/setup-tflint@v4
+        uses: terraform-linters/setup-tflint@v5
         with:
           tflint_wrapper: true
 

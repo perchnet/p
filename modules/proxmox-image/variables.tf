@@ -5,7 +5,7 @@ variable "images" {
     url = string
 
     # Optional fields with defaults
-    content_type            = optional(string, "iso")
+    content_type            = optional(string, "import")
     datastore_id            = optional(string)
     node_name               = optional(string)
     checksum                = optional(string)
@@ -31,7 +31,7 @@ variable "images" {
   validation {
     condition = alltrue([
       for name, image in var.images :
-      contains(["iso", "import", "vztmpl"], coalesce(image.content_type, "iso"))
+      contains(["iso", "images", "import", "vztmpl"], coalesce(image.content_type, "images"))
     ])
     error_message = "Content type must be either 'iso', 'import', or 'vztmpl'."
   }

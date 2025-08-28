@@ -13,6 +13,4 @@ provider "tailscale" {
 }
 
 locals {
-  ts_oauth_id     = data.onepassword_item.tailscale_apikey.username
-  ts_oauth_secret = data.onepassword_item.tailscale_apikey.credential
 }

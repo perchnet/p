@@ -10,7 +10,7 @@ terraform {
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.79"
+      version = ">= 0.82.1"
     }
     github = {
       source  = "integrations/github"
@@ -27,6 +27,7 @@ terraform {
       version = ">= 0.13.1"
     }
     random = {
+
       source  = "hashicorp/random"
       version = ">= 3.7.2"
     }
